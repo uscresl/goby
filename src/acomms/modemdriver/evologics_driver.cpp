@@ -59,6 +59,16 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     startup_done_ = true;
 }
 
+void goby::acomms::EvologicsDriver::shutdown()
+{
+    return;
+}
+
+void goby::acomms::EvologicsDriver::update_cfg(const protobuf::DriverConfig& cfg)
+{
+    return;
+}
+
 /*
  * Create sentence ID map
  */
@@ -71,6 +81,16 @@ void goby::acomms::EvologicsDriver::initialize_talkers()
  * Establish connection to modem
  */
 void goby::acomms::EvologicsDriver::establish_connection()
+{
+    return;
+}
+
+void goby::acomms::EvologicsDriver::do_work()
+{
+    return;
+}
+
+void handle_initiate_transmission(const protobuf::ModemTransmission& m)
 {
     return;
 }
