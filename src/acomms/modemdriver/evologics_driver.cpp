@@ -5,6 +5,7 @@
  */
 
 #include <sstream>
+#include <iostream>
 
 // #include <dccl/bitset.h>
 
@@ -32,6 +33,7 @@ goby::acomms::EvologicsDriver::EvologicsDriver()
 */
 {
     // INIT
+    std::cout << "greetings mundo" << std::endl;
 }
 
 void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
@@ -62,7 +64,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
  */
 void goby::acomms::EvologicsDriver::initialize_talkers()
 {
-
+    return;
 }
 
 /*
@@ -70,5 +72,5 @@ void goby::acomms::EvologicsDriver::initialize_talkers()
  */
 void goby::acomms::EvologicsDriver::establish_connection()
 {
-
+    return;
 }
