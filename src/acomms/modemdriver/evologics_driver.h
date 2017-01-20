@@ -30,6 +30,7 @@ namespace goby {
 			private:
 				// enum SentenceIDs {
 					// IDS TODO
+
 				// }
 				
 				// Configuration
@@ -38,6 +39,8 @@ namespace goby {
 				// Set after start-up
 				bool startup_done_;
 
+				void initialize_talkers();
+				void establish_connection();
 				// std::map<std::string, SentenceIDs> sentence_id_map_;
 				// std::map<std::string, std::string> description_map_;
 				// std::map<std::string, std::string> cfg_map_;

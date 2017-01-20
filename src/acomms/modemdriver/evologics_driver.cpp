@@ -46,9 +46,11 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
 	driver_cfg_ = cfg;
 
-	// if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER);
+<<<<<<< HEAD
+	if(driver_cfg_.has_tcp_port()) driver_cfg_.()
 
-	// if(driver_cfg_.has_serial_baud()) driver_cfg_.set_serial_baud(DEFAULT_BAUD);
+	if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER); //should be an ethernet connection
+=======
 
 	// clock setting
 
@@ -68,5 +70,5 @@ void goby::acomms::EvologicsDriver::initialize_talkers()
  */
 void goby::acomms::EvologicsDriver::establish_connection()
 {
-	
+
 }
