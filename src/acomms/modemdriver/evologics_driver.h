@@ -24,7 +24,7 @@ namespace goby {
 				enum SentenceIDs {
 					// IDS TODO
 				}
-				
+
 				// Configuration
 				protobuf::DriverConfig driver_cfg_;
 
@@ -33,6 +33,9 @@ namespace goby {
 
 				std::map<std::string, SentenceIDs> sentence_id_map_;
 				std::map<std::string, std::string> description_map_;
+
+				void initialize_talkers();
+				void establish_connection();
 				// std::map<std::string, std::string> cfg_map_;
 		};
 	}

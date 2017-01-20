@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 	// Input handling
 	// CL: Probably only need tty for port, name for glog, and modem id for testing
 	// CL: We can add more checks later if necessary
-	if(argc < 2)
+	if(argc < 3)
 	{
 		std::cout << "usage: driver_evologics /dev/tty_of_modem modem_id" << std::endl;
 		return 1;
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
 	// 0.5
 	// Configuring glog
-	goby::glog.set_name(argv[0]);
+	goby::glog.set_name(argv[1]);
 	goby::glog.add_stream(goby::common::logger::DEBUG3, &std::clog); // CL: Set DEBUG3, not sure if final
 
 	// 1
