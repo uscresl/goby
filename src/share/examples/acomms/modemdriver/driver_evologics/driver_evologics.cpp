@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	// 1
 	// Initialize a base driver and cfg
 	// CL: To be configured later
-	goby::acomms::ModemDriverBase* driver = 0;
+	goby::acomms::ModemDriverBase* driver = new goby::acomms::EvologicsDriver;
 	goby::acomms::protobuf::DriverConfig cfg;
 
 	// Configure ethernet connection here
@@ -36,14 +36,8 @@ int main(int argc, char* argv[]) {
 	cfg.set_tcp_server("127.0.0.1"); 										// CL: test purpose ip address
 	cfg.set_reconnect_interval(1);
 	cfg.set_tcp_port(goby::util::as<uint32>(argv[1])); 	// CL: user input port
-	// Default to Evologics Driver
-	if (!driver)
-	{
-		std::cout << "Starting Evologics Modem Driver" << std::endl;
-		// driver = new goby::acomms::EvologicsDriver; TODO
-		// TODO add additional configurations for the driver here
-	}
 
+	// Connect on completion
 	goby::acomms::connect(&driver->signal_receive, &handle_data_receive);
 
 	// 2
@@ -51,7 +45,34 @@ int main(int argc, char* argv[]) {
 	driver->startup(cfg);
 
 	// 3
-	// Initiate transmission cycle
+	// Initiate transmission
+	goby::acomms:protobuf::ModemTransmission tx_msg;
+	tx_msg.set_type(goby::acomms::protobuf::ModemTransmission::DATA);
+	tx_msg.set_src(goby::util::as<unsigned>(argv[2]));
+	// tx_msg.set_dest() TODO Where are we sending it to?
+	tx_msg.set_rate(0);
 
+	tx_msg.add_frame("+++");		// CL: Switch to command mode
+	tx_msg.add_frame("AT?AL"); 	// CL: Check local address
+	// tx_msg.set_ack_requested(true/false); TODO CL: do we need this?
+
+	// 4
+	// Run Driver
+
+	int i=0;
+	while(1)
+	{
+		++i;
+		driver->do_work();
+
+		if (!(i%600))
+			driver->handle_initiate_transmission(tx_msg);
+
+		usleep(100000);
+	}
+
+
+	// END
+	delete driver;
 	return 0;
 }
