@@ -21,7 +21,7 @@ using namespace goby::common::tcolor;
 using namespace goby::common::logger;
 using namespace goby::common::logger_lock;
 
-const std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
+const static std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
 
 //
 // INITIALIZATION
@@ -47,7 +47,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 	driver_cfg_ = cfg;
 
 
-	if(driver_cfg_.has_tcp_port()) driver_cfg_.()
+	// if(driver_cfg_.has_tcp_port()) driver_cfg_.()
 
 	if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER); //should be an ethernet connection
 
