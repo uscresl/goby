@@ -28,33 +28,33 @@ using namespace goby::common::logger_lock;
 //
 goby::acomms::EvologicsDriver::EvologicsDriver()
 /* INIT LIST
-	:
+    :
 */
 {
-	// INIT
+    // INIT
 }
 
 void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 {
-	glog.is(DEBUG1) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
+    glog.is(DEBUG1) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
 
-	if(startup_done_)
-	{
-		glog.is(DEBUG1) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
-		return;
-	}
+    if(startup_done_)
+    {
+        glog.is(DEBUG1) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
+        return;
+    }
 
-	driver_cfg_ = cfg;
-
-
-	// if(driver_cfg_.has_tcp_port()) driver_cfg_.()
-
-	// if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER); //should be an ethernet connection
+    driver_cfg_ = cfg;
 
 
-	// clock setting
+    // if(driver_cfg_.has_tcp_port()) driver_cfg_.()
 
-	startup_done_ = true;
+    // if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER); //should be an ethernet connection
+
+
+    // clock setting
+
+    startup_done_ = true;
 }
 
 /*
