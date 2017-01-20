@@ -4,3 +4,9 @@ lib
 include
 src/acomms/protobuf/dccl_option_extensions.proto
 src/acomms/protobuf/arithmetic_extensions.proto
+
+
+# System Files
+*.DS_Store
+
+# Re-include share once we're done testing 
