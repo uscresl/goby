@@ -41,6 +41,9 @@ namespace goby {
 				// std::map<std::string, SentenceIDs> sentence_id_map_;
 				// std::map<std::string, std::string> description_map_;
 				// std::map<std::string, std::string> cfg_map_;
+
+				void intialize_talkers();
+				void establish_connection();
 		};
 	}
 }
