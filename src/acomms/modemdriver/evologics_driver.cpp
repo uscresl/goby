@@ -46,7 +46,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
 	driver_cfg_ = cfg;
 
-<<<<<<< HEAD
+
 	if(driver_cfg_.has_tcp_port()) driver_cfg_.()
 
 	if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER); //should be an ethernet connection
