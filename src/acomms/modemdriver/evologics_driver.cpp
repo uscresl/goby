@@ -21,7 +21,7 @@ using namespace goby::common::tcolor;
 using namespace goby::common::logger;
 using namespace goby::common::logger_lock;
 
-const std::string goby::acomms:EvologicsDriver::SERIAL_DELIMITER = "\r";
+const std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
 
 //
 // INITIALIZATION
@@ -46,9 +46,9 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
 	driver_cfg_ = cfg;
 
-	if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER);
+	// if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER);
 
-	if(driver_cfg_.has_serial_baud()) driver_cfg_.set_serial_baud(DEFAULT_BAUD);
+	// if(driver_cfg_.has_serial_baud()) driver_cfg_.set_serial_baud(DEFAULT_BAUD);
 
 	// clock setting
 

@@ -5,7 +5,9 @@
  */
 
 #include "driver_base.h"
+
 #include "goby/acomms/protobuf/evologics_driver.pb.h"
+
 #include "goby/acomms/acomms_helpers.h"
 
 namespace goby {
@@ -15,15 +17,20 @@ namespace goby {
 				EvologicsDriver();
 				~EvologicsDriver();
 				void startup(const protobuf::DriverConfig & cfg);
+
+				// void modem_init();
+
 				void shutdown();
 				void do_work();
+
 				void handle_initiate_transmission(const protobuf::ModemTransmission & m);
+				// void process_transmission(protobuf::ModemTransmission msg, bool dial)
 
 				bool is_started() const { return startup_done_; }
 			private:
-				enum SentenceIDs {
+				// enum SentenceIDs {
 					// IDS TODO
-				}
+				// }
 				
 				// Configuration
 				protobuf::DriverConfig driver_cfg_;
@@ -31,8 +38,8 @@ namespace goby {
 				// Set after start-up
 				bool startup_done_;
 
-				std::map<std::string, SentenceIDs> sentence_id_map_;
-				std::map<std::string, std::string> description_map_;
+				// std::map<std::string, SentenceIDs> sentence_id_map_;
+				// std::map<std::string, std::string> description_map_;
 				// std::map<std::string, std::string> cfg_map_;
 		};
 	}
