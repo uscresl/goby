@@ -4,8 +4,7 @@
  * evologics_driver.h
  */
 
-#include "driver_base.h"
-
+#include "goby/acomms/modemdriver/driver_base.h"
 #include "goby/acomms/protobuf/evologics_driver.pb.h"
 
 #include "goby/acomms/acomms_helpers.h"
@@ -16,7 +15,7 @@ namespace goby {
             public:
                 EvologicsDriver();
                 ~EvologicsDriver();
-                void startup(const protobuf::DriverConfig & cfg);
+                void startup(const protobuf::DriverConfig& cfg);
 
                 // void modem_init();
 
@@ -24,7 +23,7 @@ namespace goby {
                 void do_work();
                 void update_cfg(const protobuf::DriverConfig& cfg);
 
-                void handle_initiate_transmission(const protobuf::ModemTransmission & m);
+                void handle_initiate_transmission(const protobuf::ModemTransmission& m);
                 // void process_transmission(protobuf::ModemTransmission msg, bool dial)
 
                 bool is_started() const { return startup_done_; }
