@@ -24,7 +24,7 @@ using namespace goby::common::logger;
 using google::protobuf::uint32;
 using namespace google::protobuf;
 using namespace goby::common::tcolor;
-using namespace goby::common::goby_time;
+// using namespace goby::common::goby_time;
 using namespace goby::common::logger_lock;
 
 // const static std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
@@ -53,8 +53,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     if(startup_done_)
     {
-        glog.is(DEBUG3neralwin1@
-            ) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
+        glog.is(DEBUG3) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
         return;
     }
 
