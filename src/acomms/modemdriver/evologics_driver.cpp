@@ -53,7 +53,8 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     if(startup_done_)
     {
-        glog.is(DEBUG3) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
+        glog.is(DEBUG3neralwin1@
+            ) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
         return;
     }
 
