@@ -57,17 +57,11 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
         return;
     }
 
-
-    // if(driver_cfg_.has_tcp_port()) driver_cfg_.()
-
-    // if (!cfg.has_line_delimiter()) driver_cfg_.set_line_delimiter(SERIAL_DELIMITER); //should be an ethernet connection
-
-
-    // clock setting
-
     startup_done_ = true;
 
-    return;
+    driver_cfg_.set_line_delimiter("\r");
+
+    modem_init();
 }
 
 void goby::acomms::EvologicsDriver::shutdown()

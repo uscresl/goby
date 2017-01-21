@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     // Configure ethernet connection here
     cfg.set_modem_id(goby::util::as<uint32>(argv[3]));  // CL: user input id
     cfg.set_connection_type(goby::acomms::protobuf::DriverConfig::CONNECTION_TCP_AS_CLIENT);
-    cfg.set_tcp_server("127.0.0.1");                                        // CL: test purpose ip address
+    cfg.set_tcp_server("localhost");                                        // CL: test purpose ip address
     cfg.set_reconnect_interval(1);
     cfg.set_tcp_port(goby::util::as<uint32>(argv[2]));  // CL: user input port
 
