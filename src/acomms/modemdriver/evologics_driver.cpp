@@ -91,7 +91,7 @@ void goby::acomms::EvologicsDriver::do_work()
     return;
 }
 
-void handle_initiate_transmission(const protobuf::ModemTransmission & m)
+void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
 {
     return;
 }
