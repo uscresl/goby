@@ -22,6 +22,7 @@ namespace goby {
 
                 void shutdown();
                 void do_work();
+                void update_cfg(const protobuf::DriverConfig& cfg);
 
                 void handle_initiate_transmission(const protobuf::ModemTransmission & m);
                 // void process_transmission(protobuf::ModemTransmission msg, bool dial)
