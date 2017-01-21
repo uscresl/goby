@@ -4,14 +4,22 @@
  * evologics_driver.h
  */
 
+#ifndef EvologicsModemDriver20170120
+#define EvologicsModemDriver20170120
+
+#include "goby/common/time.h"
+
 #include "goby/acomms/modemdriver/driver_base.h"
 #include "goby/acomms/protobuf/evologics_driver.pb.h"
 
 #include "goby/acomms/acomms_helpers.h"
 
-namespace goby {
-    namespace acomms {
-        class EvologicsDriver : public ModemDriverBase {
+namespace goby 
+{
+    namespace acomms 
+    {
+        class EvologicsDriver : public ModemDriverBase 
+        {
             public:
                 EvologicsDriver();
                 ~EvologicsDriver();
@@ -21,6 +29,7 @@ namespace goby {
 
                 void shutdown();
                 void do_work();
+                
                 void update_cfg(const protobuf::DriverConfig& cfg);
 
                 void handle_initiate_transmission(const protobuf::ModemTransmission& m);
@@ -48,3 +57,4 @@ namespace goby {
     }
 }
 
+#endif

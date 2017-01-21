@@ -9,18 +9,22 @@
 
 // #include <dccl/bitset.h>
 
+#include "evologics_driver.h"
+
 #include "goby/common/logger.h"
 #include "goby/util/binary.h"
 #include "goby/util/sci.h"
+#include "goby/acomms/acomms_helpers.h"
 
-#include "evologics_driver.h"
-#include "driver_exception.h"
+#include "goby/acomms/modemdriver/driver_exception.h"
 
 using goby::glog;
+using namespace goby::common::logger;
+
 using google::protobuf::uint32;
 using namespace google::protobuf;
 using namespace goby::common::tcolor;
-using namespace goby::common::logger;
+using namespace goby::common::goby_time;
 using namespace goby::common::logger_lock;
 
 // const static std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
@@ -37,17 +41,21 @@ goby::acomms::EvologicsDriver::EvologicsDriver()
     std::cout << "greetings mundo" << std::endl;
 }
 
+goby::acomms::EvologicsDriver::~EvologicsDriver()
+{
+}
+
 void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 {
-    glog.is(DEBUG1) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
+    driver_cfg_ = cfg;
+
+    glog.is(DEBUG3) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
 
     if(startup_done_)
     {
-        glog.is(DEBUG1) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
+        glog.is(DEBUG3) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
         return;
     }
-
-    driver_cfg_ = cfg;
 
 
     // if(driver_cfg_.has_tcp_port()) driver_cfg_.()
@@ -58,6 +66,8 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // clock setting
 
     startup_done_ = true;
+
+    return;
 }
 
 void goby::acomms::EvologicsDriver::shutdown()
