@@ -13,8 +13,6 @@
 #include "goby/util/binary.h"
 #include "goby/util/sci.h"
 
-#include "google\protobuf\service.h"
-
 #include "evologics_driver.h"
 #include "driver_exception.h"
 
