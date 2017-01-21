@@ -18,6 +18,7 @@
 
 using goby::glog;
 using google::protobuf::uint32;
+using namespace google::protobuf;
 using namespace goby::common::tcolor;
 using namespace goby::common::logger;
 using namespace goby::common::logger_lock;
@@ -90,7 +91,7 @@ void goby::acomms::EvologicsDriver::do_work()
     return;
 }
 
-void handle_initiate_transmission(const protobuf::ModemTransmission& m)
+void handle_initiate_transmission(const protobuf::ModemTransmission & m)
 {
     return;
 }
