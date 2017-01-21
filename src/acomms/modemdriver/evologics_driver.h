@@ -4,8 +4,8 @@
  * evologics_driver.h
  */
 
-#ifndef EvologicsModemDriver20170120
-#define EvologicsModemDriver20170120
+#ifndef EvologicsModemDriver20170120H
+#define EvologicsModemDriver20170120H
 
 #include "goby/common/time.h"
 
@@ -29,7 +29,7 @@ namespace goby
 
                 void shutdown();
                 void do_work();
-                
+
                 void update_cfg(const protobuf::DriverConfig& cfg);
 
                 void handle_initiate_transmission(const protobuf::ModemTransmission& m);
