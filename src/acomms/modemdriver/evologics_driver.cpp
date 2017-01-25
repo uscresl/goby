@@ -64,6 +64,9 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     driver_cfg_.set_line_delimiter("\r");
 
+    //set local modem id (mac address)
+
+
     modem_init();
 }
 
@@ -107,6 +110,9 @@ void goby::acomms::EvologicsDriver::modem_init()
 
 void goby::acomms::EvologicsDriver::shutdown()
 {
+    //put modem into low power state (how to do this)
+    //modem_close();
+    //
     return;
 }
 
