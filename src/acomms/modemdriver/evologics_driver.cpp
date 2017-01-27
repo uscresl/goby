@@ -61,6 +61,10 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // CL: Yet to define any extensions for our driver/protobuf
     // Would modify settings accordingly here
     
+    if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
+        client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
+        client_->start();
+    }
 
     startup_done_ = true;
 
@@ -69,10 +73,10 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     //set local modem id (mac address)
 
 
-//    modem_init();
+    modem_init();
 }
 
-/*
+
 void goby::acomms::EvologicsDriver::modem_init()
 {
 
@@ -93,7 +97,7 @@ void goby::acomms::EvologicsDriver::modem_init()
             throw(ModemDriverException("Failed to startup.", protobuf::ModemDriverStatus::STARTUP_FAILED));
     }
 }
-*/
+
 
 void goby::acomms::EvologicsDriver::shutdown()
 {
@@ -106,6 +110,7 @@ void goby::acomms::EvologicsDriver::shutdown()
 
 void goby::acomms::EvologicsDriver::update_cfg(const protobuf::DriverConfig& cfg)
 {
+    // TODO
     return;
 }
 
@@ -114,6 +119,7 @@ void goby::acomms::EvologicsDriver::update_cfg(const protobuf::DriverConfig& cfg
  */
 void goby::acomms::EvologicsDriver::initialize_talkers()
 {
+    // TODO
     return;
 }
 
