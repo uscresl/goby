@@ -29,9 +29,7 @@ using namespace goby::common::logger_lock;
 
 // const static std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
 
-//
-// INITIALIZATION
-//
+
 goby::acomms::EvologicsDriver::EvologicsDriver()
 /* INIT LIST
     :
@@ -45,20 +43,24 @@ goby::acomms::EvologicsDriver::~EvologicsDriver()
 {
 }
 
+
 void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 {
     driver_cfg_ = cfg;
 
-    driver_cfg_.set_line_delimiter("\r");
-
-
     glog.is(DEBUG3) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
+    
+    driver_cfg_.set_line_delimiter("\r");
 
     if(startup_done_)
     {
         glog.is(DEBUG3) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
         return;
     }
+
+    // CL: Yet to define any extensions for our driver/protobuf
+    // Would modify settings accordingly here
+    
 
     startup_done_ = true;
 
@@ -75,45 +77,29 @@ void goby::acomms::EvologicsDriver::modem_init()
 
     modem_start(driver_cfg_);
 
-    serial_fd_ = dynamic_cast<util::SerialClient&>(modem()).socket().native();
-    set_dtr(true);
-    glog.is(DEBUG1) && glog << group(glog_out_group()) << "DTR is: " << query_dtr() << std::endl;
-    dtr_set = true;
+    int i = 0;
+    while(some condition) {
+        do_work();
 
-    // no fsm declared as of now, may need it later ???
-    // fsm_.initiate();
+        const int pause_ms = 10;
+        usleep(pause_ms*1000);
+        ++i;
+        
+        // CL: Temporary hard coded value, to be defined in proto
+        const int start_timeout = 2000;
 
-
-    // int i = 0;
-    // bool dtr_set = false;
-    // while(fsm_.state_cast<const fsm::Ready *>() == 0)
-    // {
-    //     do_work();
-    //
-    //     if(driver_cfg_.GetExtension(IridiumDriverConfig::use_dtr) &&
-    //        modem().active() &&
-    //        !dtr_set)
-    //     {
-
-    //
-    //     }
-    //
-    //     const int pause_ms = 10;
-    //     usleep(pause_ms*1000);
-    //     ++i;
-    //
-    //     const int start_timeout = driver_cfg_.GetExtension(IridiumDriverConfig::start_timeout);
-    //     if(i / (1000/pause_ms) > start_timeout)
-    //         throw(ModemDriverException("Failed to startup.",protobuf::ModemDriverStatus::STARTUP_FAILED));
-    // }
+        if (i / (1000/pause_ms) > start_timeout)
+            throw(ModemDriverException("Failed to startup.", protobuf::ModemDriverStatus::STARTUP_FAILED));
+    }
 }
 
 void goby::acomms::EvologicsDriver::shutdown()
 {
     //put modem into low power state (how to do this)
-    //modem_close();
-    //
-    return;
+    // CL: Not sure what that means ^
+    out_.clear();               // clear our queue of messages
+    startup_done_ = false;      // startup set to false
+    modem_close();              // shut down modem
 }
 
 void goby::acomms::EvologicsDriver::update_cfg(const protobuf::DriverConfig& cfg)
@@ -139,7 +125,16 @@ void goby::acomms::EvologicsDriver::establish_connection()
 
 void goby::acomms::EvologicsDriver::do_work()
 {
-    return;
+    double now = goby_time<double>();
+
+    // on transmit
+
+    // on receive
+    std::string in;
+    while (modem_read(&in)) {
+        boost::trim(in);
+        std::cout << in << std::endl;       // CL: Just try and print out for now
+    }
 }
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)

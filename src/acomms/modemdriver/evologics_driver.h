@@ -37,18 +37,16 @@ namespace goby
 
                 bool is_started() const { return startup_done_; }
             private:
-                // enum SentenceIDs {
-                    // IDS TODO
+                // enum SentenceIDs {..}
 
-                // }
-                
+                std::deque<std::string> out_;
+
                 // Configuration
                 protobuf::DriverConfig driver_cfg_;
 
                 // Set after start-up
                 bool startup_done_;
 
-                void initialize_talkers();
                 void establish_connection();
                 // std::map<std::string, SentenceIDs> sentence_id_map_;
                 // std::map<std::string, std::string> description_map_;
