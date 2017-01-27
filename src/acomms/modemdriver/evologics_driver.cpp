@@ -69,9 +69,10 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     //set local modem id (mac address)
 
 
-    modem_init();
+//    modem_init();
 }
 
+/*
 void goby::acomms::EvologicsDriver::modem_init()
 {
 
@@ -92,6 +93,7 @@ void goby::acomms::EvologicsDriver::modem_init()
             throw(ModemDriverException("Failed to startup.", protobuf::ModemDriverStatus::STARTUP_FAILED));
     }
 }
+*/
 
 void goby::acomms::EvologicsDriver::shutdown()
 {

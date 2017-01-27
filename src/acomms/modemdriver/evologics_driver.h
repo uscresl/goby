@@ -25,7 +25,7 @@ namespace goby
                 ~EvologicsDriver();
                 void startup(const protobuf::DriverConfig& cfg);
 
-                // void modem_init();
+                void modem_init();
 
                 void shutdown();
                 void do_work();
@@ -36,11 +36,11 @@ namespace goby
                 // void process_transmission(protobuf::ModemTransmission msg, bool dial)
 
                 bool is_started() const { return startup_done_; }
+
             private:
                 // enum SentenceIDs {..}
 
                 std::deque<std::string> out_;
-
                 // Configuration
                 protobuf::DriverConfig driver_cfg_;
 
