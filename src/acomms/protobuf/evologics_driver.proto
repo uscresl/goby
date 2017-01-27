@@ -8,3 +8,21 @@ package evologics.protobuf;
 // not sure how messages should be formatted here
 // could just use acomms_driver_base.proto for now
 // if additional ext's necessary, define here
+
+message EvologicsDriverConfig
+{
+  message Remote
+  {
+    required string evologics_number = 1;
+    required int32 modem_id = 2;
+  }
+  extend goby.acomms.protobuf.DriverConfig
+  {
+    optional Remote remote = 1461;
+    //optional int32 target_bit_rate = ? [max = 9200];
+    optional int32 baud_rate = 1462 [default = 19200];
+    optional int32 port_number = 1463 [default = 9200];
+    optional int32 start_timeout = 1464 [default = 20];
+    required string ip_address = 127.0.0.1; //not sure if this is necessary or not?
+  }
+}
