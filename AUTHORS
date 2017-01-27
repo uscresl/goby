@@ -20,7 +20,7 @@ We greatly appreciate contributions of code, bug fixes, and documentation from t
 
 Before contributing to Goby, in order for us to use your contribution and distribute it under the existing open source licenses, we request that you read the appropriate Contributor License Agreement (CLA) located at:
 
-Individuals: 
+Individuals:
   http://gobysoft.org/dl/gobysoft_contributor_license_agreement-individual.pdf
 Entities:
   http://gobysoft.org/dl/gobysoft_contributor_license_agreement-entity.pdf
@@ -33,3 +33,4 @@ Toby Schneider <toby@gobysoft.org> 2016-05-13
 Zac Berkowitz <zberkowitz@whoi.edu> 2016-05-19
 Stephanie Kemna <stephaniekemna@gmail.com> 2016-10-11
 Clifford Lee <leecliff@usc.edu> 2017-01-27
+Prachi Nawathe <pnawathe@usc.edu> 2017-01-27
