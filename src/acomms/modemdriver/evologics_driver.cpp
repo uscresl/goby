@@ -24,7 +24,7 @@ using namespace goby::common::logger;
 using google::protobuf::uint32;
 using namespace google::protobuf;
 using namespace goby::common::tcolor;
-// using namespace goby::common::goby_time;
+using goby::common::goby_time;
 using namespace goby::common::logger_lock;
 
 // const static std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
@@ -61,8 +61,8 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // CL: Yet to define any extensions for our driver/protobuf
     // Would modify settings accordingly here
 
-    if (driver_cfg_.HasExtension(protobuf::EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(protobuf::EvologicsDriverConfig::port_number)) {
-        client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(protobuf::EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(protobuf::EvologicsDriverConfig::port_number)));
+    if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
+        client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
         client_->start();
     }
 
@@ -98,7 +98,7 @@ void goby::acomms::EvologicsDriver::modem_init()
         if (i / (1000/pause_ms) > start_timeout)
             throw(ModemDriverException("Failed to startup.", protobuf::ModemDriverStatus::STARTUP_FAILED));
 */
-    }
+   // }
 }
 
 void goby::acomms::EvologicsDriver::shutdown()

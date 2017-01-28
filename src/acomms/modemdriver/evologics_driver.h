@@ -9,6 +9,8 @@
 
 #include "goby/common/time.h"
 
+#include "goby/util/linebasedcomms/tcp_client.h"
+
 #include "goby/acomms/modemdriver/driver_base.h"
 #include "goby/acomms/protobuf/evologics_driver.pb.h"
 
@@ -44,6 +46,11 @@ namespace goby
 
                 // Configuration
                 protobuf::DriverConfig driver_cfg_;
+
+                // client
+                boost::shared_ptr<goby::util::TCPClient> client_;
+
+                std::deque<std::string> out_;
 
                 // Set after start-up
                 bool startup_done_;
