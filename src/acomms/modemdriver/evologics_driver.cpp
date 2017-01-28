@@ -82,6 +82,8 @@ void goby::acomms::EvologicsDriver::modem_init()
 
     modem_start(driver_cfg_);
 
+    do_work();
+/*
     int i = 0;
     while((i + 100) / (1000/pause_ms) > start_timeout) {
         do_work();
@@ -92,7 +94,7 @@ void goby::acomms::EvologicsDriver::modem_init()
 
         // CL: Temporary hard coded value, to be defined in proto
         const int start_timeout = 2000;
-/*
+        
         if (i / (1000/pause_ms) > start_timeout)
             throw(ModemDriverException("Failed to startup.", protobuf::ModemDriverStatus::STARTUP_FAILED));
 */
@@ -136,7 +138,8 @@ void goby::acomms::EvologicsDriver::do_work()
     double now = goby_time<double>();
 
     // on transmit
-
+    modem_write("+++");
+    modem_write("AT?AL");
 
     // on receive
     std::string in;
@@ -148,6 +151,6 @@ void goby::acomms::EvologicsDriver::do_work()
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
 {
-
+    
     return;
 }

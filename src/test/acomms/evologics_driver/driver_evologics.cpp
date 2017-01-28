@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     // 2
     // Start up
     driver->startup(cfg);
-
+/*
     // 3
     // Initiate transmission
     goby::acomms:protobuf::ModemTransmission tx_msg;
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
 
         usleep(100000);
     }
-
+*/
 
     // END
     delete driver;
