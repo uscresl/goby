@@ -49,7 +49,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     driver_cfg_ = cfg;
 
     glog.is(DEBUG3) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
-    
+
     driver_cfg_.set_line_delimiter("\r");
 
     if(startup_done_)
@@ -60,7 +60,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     // CL: Yet to define any extensions for our driver/protobuf
     // Would modify settings accordingly here
-    
+
     if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
         client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
         client_->start();
@@ -83,13 +83,13 @@ void goby::acomms::EvologicsDriver::modem_init()
     modem_start(driver_cfg_);
 
     int i = 0;
-    while(i / (1000/pause_ms) > start_timeout) {
+    while((i + 100) / (1000/pause_ms) > start_timeout) {
         do_work();
 
         const int pause_ms = 10;
         usleep(pause_ms*1000);
         ++i;
-        
+
         // CL: Temporary hard coded value, to be defined in proto
         const int start_timeout = 2000;
 /*
@@ -98,7 +98,6 @@ void goby::acomms::EvologicsDriver::modem_init()
 */
     }
 }
-
 
 void goby::acomms::EvologicsDriver::shutdown()
 {
@@ -149,5 +148,6 @@ void goby::acomms::EvologicsDriver::do_work()
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
 {
+
     return;
 }
