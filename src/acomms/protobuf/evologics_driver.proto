@@ -23,6 +23,6 @@ message EvologicsDriverConfig
     optional int32 baud_rate = 1462 [default = 19200];
     optional int32 port_number = 1463 [default = 9200];
     optional int32 start_timeout = 1464 [default = 20];
-    required string ip_address = 127.0.0.1; //not sure if this is necessary or not?
+    required string ip_address = "127.0.0.1"; //not sure if this is necessary or not?
   }
 }
