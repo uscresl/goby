@@ -61,8 +61,8 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // CL: Yet to define any extensions for our driver/protobuf
     // Would modify settings accordingly here
 
-    if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
-        client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
+    if (driver_cfg_.HasExtension(protobuf::EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(protobuf::EvologicsDriverConfig::port_number)) {
+        client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(protobuf::EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(protobuf::EvologicsDriverConfig::port_number)));
         client_->start();
     }
 
