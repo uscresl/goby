@@ -4,8 +4,8 @@
  * evologics_driver.h
  */
 
-#ifndef EvologicsModemDriver20170120H
-#define EvologicsModemDriver20170120H
+#ifndef EvologicsModemDriver20170120
+#define EvologicsModemDriver20170120
 
 #include "goby/common/time.h"
 
@@ -14,18 +14,18 @@
 
 #include "goby/acomms/acomms_helpers.h"
 
-namespace goby 
+namespace goby
 {
-    namespace acomms 
+    namespace acomms
     {
-        class EvologicsDriver : public ModemDriverBase 
+        class EvologicsDriver : public ModemDriverBase
         {
             public:
                 EvologicsDriver();
                 ~EvologicsDriver();
                 void startup(const protobuf::DriverConfig& cfg);
 
-                void modem_init();
+                // void modem_init();
 
                 void shutdown();
                 void do_work();
@@ -36,17 +36,21 @@ namespace goby
                 // void process_transmission(protobuf::ModemTransmission msg, bool dial)
 
                 bool is_started() const { return startup_done_; }
-
             private:
-                // enum SentenceIDs {..}
+                // enum SentenceIDs {
+                    // IDS TODO
 
-                std::deque<std::string> out_;
+                // }
+
                 // Configuration
                 protobuf::DriverConfig driver_cfg_;
 
                 // Set after start-up
                 bool startup_done_;
 
+								void modem_init();
+
+                void initialize_talkers();
                 void establish_connection();
                 // std::map<std::string, SentenceIDs> sentence_id_map_;
                 // std::map<std::string, std::string> description_map_;
