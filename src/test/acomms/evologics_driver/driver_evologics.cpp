@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
     // Input handling
     // CL: Probably only need tty for port, name for glog, and modem id for testing
     // CL: We can add more checks later if necessary
-    if(argc < 3)
+    if(argc < 4)
     {
         std::cout << "usage: driver_evologics /dev/tty_of_modem modem_id" << std::endl;
         return 1;
