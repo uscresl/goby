@@ -1,9 +1,11 @@
+#include <google/protobuf/descriptor.pb.h>
 #include "goby/acomms/modemdriver/evologics_driver.h"
 #include "../driver_tester/driver_tester.h"
 
 /*
 #include "goby/util/binary.h"
 #include "goby/common/logger.h"
+#include "goby/common/time.h"
 #include "goby/acomms/connect.h"
 */
 
@@ -17,7 +19,7 @@ int main(int argc, char* argv[]) {
     // Input handling
     // CL: Probably only need tty for port, name for glog, and modem id for testing
     // CL: We can add more checks later if necessary
-    if(argc < 3)
+    if(argc < 4)
     {
         std::cout << "usage: driver_evologics /dev/tty_of_modem modem_id" << std::endl;
         return 1;
