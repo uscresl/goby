@@ -1,3 +1,3 @@
-add_executable(driver_evologics driver_evologics.cpp)
-target_link_libraries(driver_evologics goby_acomms ${Boost_LIBRARIES} ${PROTOBUF_LIBRARIES})
-install(TARGETS driver_evologics RUNTIME DESTINATION bin)
+add_executable(goby_test_evologics test.cpp ../driver_tester/driver_tester.cpp)
+target_link_libraries(goby_test_evologics goby_acomms ${Boost_LIBRARIES} ${PROTOBUF_LIBRARIES})
+install(TARGETS goby_test_evologics RUNTIME DESTINATION bin)

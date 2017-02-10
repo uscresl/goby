@@ -1,8 +1,11 @@
 #include "goby/acomms/modemdriver/evologics_driver.h"
-#include "goby/acomms/modem_driver.h"
+#include "../driver_tester/driver_tester.h"
+
+/*
 #include "goby/util/binary.h"
 #include "goby/common/logger.h"
 #include "goby/acomms/connect.h"
+*/
 
 #include <iostream>
 
