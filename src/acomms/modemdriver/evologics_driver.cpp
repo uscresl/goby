@@ -30,13 +30,9 @@ using namespace goby::common::logger_lock;
 // const static std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
 
 
-goby::acomms::EvologicsDriver::EvologicsDriver()
-/* INIT LIST
-    :
-*/
+goby::acomms::EvologicsDriver::EvologicsDriver() :
+    startup_done_(false)
 {
-    // INIT
-    std::cout << "greetings mundo" << std::endl;
 }
 
 goby::acomms::EvologicsDriver::~EvologicsDriver()
@@ -52,6 +48,8 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     driver_cfg_.set_line_delimiter("\r");
 
+
+
     if(startup_done_)
     {
         glog.is(DEBUG3) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
@@ -62,6 +60,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // Would modify settings accordingly here
 
     if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
+        std::cout << "ENTERED HERE " << std::endl;
         client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
         client_->start();
     }
@@ -72,7 +71,6 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     //set local modem id (mac address)
 
-
     modem_init();
 }
 
@@ -81,7 +79,6 @@ void goby::acomms::EvologicsDriver::modem_init()
 {
 
     modem_start(driver_cfg_);
-
     do_work();
 /*
     int i = 0;

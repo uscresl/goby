@@ -14,7 +14,7 @@ project(goby)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/")
 
 
-option(enable_testing "Enable building of tests using CTest (if set to ON, you can run tests with 'make test')" OFF)
+option(enable_testing "Enable building of tests using CTest (if set to ON, you can run tests with 'make test')" ON)
 if(enable_testing)
   enable_testing()
   include(CTest)

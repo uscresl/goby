@@ -14,6 +14,7 @@ enum DriverType {
   DRIVER_IRIDIUM = 8;
   DRIVER_IRIDIUM_SHORE = 9;
   DRIVER_BENTHOS_ATM900 = 10;
+  // TODO modem enum here
 }
 
 message DriverConfig
