@@ -19,9 +19,9 @@ int main(int argc, char* argv[]) {
     // Input handling
     // CL: Probably only need tty for port, name for glog, and modem id for testing
     // CL: We can add more checks later if necessary
-    if(argc < 3)
+    if(argc < 4)
     {
-        std::cout << "usage: driver_evologics /dev/tty_of_modem modem_id port number" << std::endl;
+        std::cout << "usage: ./driver_evologics name address modem_id port number" << std::endl;
         return 1;
     }
 
@@ -37,11 +37,11 @@ int main(int argc, char* argv[]) {
     goby::acomms::protobuf::DriverConfig cfg;
 
     // Configure ethernet connection here
-    cfg.set_modem_id(goby::util::as<uint32_t>(argv[2]));  // CL: user input id
+    cfg.set_modem_id(goby::util::as<uint32_t>(argv[3]));  // CL: user input id
     cfg.set_connection_type(goby::acomms::protobuf::DriverConfig::CONNECTION_TCP_AS_CLIENT);
-    cfg.set_tcp_server("localhost");
-    cfg.set_reconnect_interval(1);
-    cfg.set_tcp_port(goby::util::as<uint32_t>(argv[3]));  // CL: user input port
+    cfg.set_tcp_server(argv[2]);
+    cfg.set_reconnect_interval(100);
+    cfg.set_tcp_port(goby::util::as<uint32_t>(argv[4]));  // CL: user input port
 
     // Connect on completion
     goby::acomms::connect(&driver->signal_receive, &handle_data_receive);

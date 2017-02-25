@@ -30,7 +30,7 @@ namespace goby
                 // void modem_init();
 
                 void shutdown();
-                void do_work();
+                virtual void do_work();
 
                 void update_cfg(const protobuf::DriverConfig& cfg);
 

@@ -60,9 +60,9 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // Would modify settings accordingly here
 
     if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
-        std::cout << "ENTERED HERE " << std::endl;
         client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
         client_->start();
+        std::cout << "TEST" << std::endl;
     }
 
     startup_done_ = true;
@@ -132,18 +132,18 @@ void goby::acomms::EvologicsDriver::establish_connection()
 
 void goby::acomms::EvologicsDriver::do_work()
 {
-    double now = goby_time<double>();
-
     // on transmit
-    modem_write("+++");
-    modem_write("AT?AL");
-
+    std::string out = "Hello World!\r\n";
+    modem_write(out);
+    
     // on receive
-    std::string in;
-    while (modem_read(&in)) {
-        boost::trim(in);
-        std::cout << in << std::endl;       // CL: Just try and print out for now
-    }
+    // std::string in;
+
+    // while (modem().active() && modem_read(&in)) {
+    //     std::cout << boost:trim(in) << std::endl;       // CL: Just try and print out for now
+    // }
+
+    std::cout << "d5" << std::endl;
 }
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
