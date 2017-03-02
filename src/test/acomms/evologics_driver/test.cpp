@@ -39,9 +39,9 @@ int main(int argc, char* argv[]) {
     // Configure ethernet connection here
     cfg.set_modem_id(goby::util::as<uint32_t>(argv[2]));  // CL: user input id
     cfg.set_connection_type(goby::acomms::protobuf::DriverConfig::CONNECTION_TCP_AS_CLIENT);
-    cfg.set_tcp_server("localhost");
+    cfg.set_tcp_server("192.168.1.29");
     cfg.set_reconnect_interval(1);
-    cfg.set_tcp_port(goby::util::as<uint32_t>(argv[3]));  // CL: user input port
+    cfg.set_tcp_port(goby::util::as<uint32_t>(argv[3]));  // CL: user input port //default: 9200
 
     // Connect on completion
     goby::acomms::connect(&driver->signal_receive, &handle_data_receive);

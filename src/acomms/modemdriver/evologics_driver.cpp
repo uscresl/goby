@@ -59,26 +59,27 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // CL: Yet to define any extensions for our driver/protobuf
     // Would modify settings accordingly here
 
-    if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
+    /*if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
         std::cout << "ENTERED HERE " << std::endl;
         client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
         client_->start();
-    }
+    }*/
 
     startup_done_ = true;
 
-    driver_cfg_.set_line_delimiter("\r");
+    // driver_cfg_.set_line_delimiter("\r");
 
     //set local modem id (mac address)
-
     modem_init();
+    // std::cout << "complete init function" << std::endl;
 }
 
 
 void goby::acomms::EvologicsDriver::modem_init()
 {
-
+    std::cout << "call modem_start" << std::endl;
     modem_start(driver_cfg_);
+    std::cout << "complete modem_start" << std::endl;
     do_work();
 /*
     int i = 0;
@@ -134,16 +135,19 @@ void goby::acomms::EvologicsDriver::do_work()
 {
     double now = goby_time<double>();
 
+    std::cout<< "+++AT?S" << std::endl;
     // on transmit
-    modem_write("+++");
-    modem_write("AT?AL");
-
+    modem_write("+++AT?S");
+    // modem_write("AT?S");
+    sleep(500);
     // on receive
     std::string in;
-    while (modem_read(&in)) {
-        boost::trim(in);
-        std::cout << in << std::endl;       // CL: Just try and print out for now
-    }
+    // while (/*modem_read(&in)*/ 1) {
+    //     // std::cout << "enter while loop" << std::endl;
+    //     modem_read(&in);
+    //     boost::trim(in);
+    //     if(in.length() > 0) std::cout << in << std::endl;       // CL: Just try and print out for now
+    // }
 }
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
