@@ -46,7 +46,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     glog.is(DEBUG3) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
 
-    driver_cfg_.set_line_delimiter("\r");
+    //driver_cfg_.set_line_delimiter("\r");
 
 
 
@@ -135,10 +135,17 @@ void goby::acomms::EvologicsDriver::do_work()
 {
     double now = goby_time<double>();
 
-    std::cout<< "+++AT?S" << std::endl;
+    std::cout<< "AT?S" << std::endl;
     // on transmit
-    modem_write("+++AT?S");
+    modem_write("AT?S");
     sleep(1000);
+
+    /*read in whatever is sent to the modem and print to console*/
+    // std::string in;
+    // while(1) {
+    //     modem_read(in);
+    //     std::cout << "read in from modem " << in << std::endl;
+    // }
     
     // on receive
     std::string in;
