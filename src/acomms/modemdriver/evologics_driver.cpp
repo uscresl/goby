@@ -46,7 +46,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     glog.is(DEBUG3) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
 
-    //driver_cfg_.set_line_delimiter("\r");
+    driver_cfg_.set_line_delimiter("\r");
 
 
 
@@ -141,14 +141,15 @@ void goby::acomms::EvologicsDriver::do_work()
     sleep(1000);
 
     /*read in whatever is sent to the modem and print to console*/
-    // std::string in;
-    // while(1) {
-    //     modem_read(in);
-    //     std::cout << "read in from modem " << in << std::endl;
-    // }
+    std::string in;
+    while(1) {
+        std::cout << "enter while loop" << std::endl;
+        if(modem_read(&in))
+            std::cout << "read in from modem " << in << std::endl;
+    }
     
     // on receive
-    std::string in;
+    // std::string in;
     // while (/*modem_read(&in)*/ 1) {
     //     // std::cout << "enter while loop" << std::endl;
     //     modem_read(&in);
