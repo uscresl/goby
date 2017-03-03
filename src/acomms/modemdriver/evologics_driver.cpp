@@ -67,18 +67,19 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     startup_done_ = true;
 
-    driver_cfg_.set_line_delimiter("\r");
+    // driver_cfg_.set_line_delimiter("\r");
 
     //set local modem id (mac address)
-
     modem_init();
+    // std::cout << "complete init function" << std::endl;
 }
 
 
 void goby::acomms::EvologicsDriver::modem_init()
 {
-
+    std::cout << "call modem_start" << std::endl;
     modem_start(driver_cfg_);
+    std::cout << "complete modem_start" << std::endl;
     do_work();
 /*
     int i = 0;
@@ -132,17 +133,21 @@ void goby::acomms::EvologicsDriver::establish_connection()
 
 void goby::acomms::EvologicsDriver::do_work()
 {
+    double now = goby_time<double>();
+
+    std::cout<< "+++AT?S" << std::endl;
     // on transmit
-    std::string out = "Hello World!\r\n";
-    modem_write(out);
+    modem_write("+++AT?S");
+    sleep(1000);
     
-    usleep(10000);
     // on receive
     std::string in;
-
-    while (modem().active() && modem_read(&in)) {
-        std::cout << in << std::endl;       // CL: Just try and print out for now
-    }
+    // while (/*modem_read(&in)*/ 1) {
+    //     // std::cout << "enter while loop" << std::endl;
+    //     modem_read(&in);
+    //     boost::trim(in);
+    //     if(in.length() > 0) std::cout << in << std::endl;       // CL: Just try and print out for now
+    // }
 }
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)

@@ -105,7 +105,12 @@ bool goby::util::LineBasedInterface::readline(std::string* s, AccessOrder order 
 
 // pass the write data via the io service in the other thread
 void goby::util::LineBasedInterface::write(const protobuf::Datagram& msg)
-{ io_service_.post(boost::bind(&LineBasedInterface::do_write, this, msg)); }
+{ 
+    std::cout << "LineBasedInterface writing " << msg.data() << std::endl;
+    // std::cout << "LineBasedInterface writing " << *msg << std::endl;
+    
+    io_service_.post(boost::bind(&LineBasedInterface::do_write, this, msg)); 
+}
 
 // call the do_close function via the io service in the other thread
 void goby::util::LineBasedInterface::close()
