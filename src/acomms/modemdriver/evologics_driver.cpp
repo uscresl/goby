@@ -136,14 +136,13 @@ void goby::acomms::EvologicsDriver::do_work()
     std::string out = "Hello World!\r\n";
     modem_write(out);
     
+    usleep(10000);
     // on receive
-    // std::string in;
+    std::string in;
 
-    // while (modem().active() && modem_read(&in)) {
-    //     std::cout << boost:trim(in) << std::endl;       // CL: Just try and print out for now
-    // }
-
-    std::cout << "d5" << std::endl;
+    while (modem().active() && modem_read(&in)) {
+        std::cout << in << std::endl;       // CL: Just try and print out for now
+    }
 }
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
