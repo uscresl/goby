@@ -27,8 +27,7 @@ using namespace goby::common::tcolor;
 using goby::common::goby_time;
 using namespace goby::common::logger_lock;
 
-// const static std::string goby::acomms::EvologicsDriver::SERIAL_DELIMITER = "\r";
-
+std::string const goby::acomms::EvologicsDriver::LINE_DELIMITER = "\n";
 
 goby::acomms::EvologicsDriver::EvologicsDriver() :
     startup_done_(false)
@@ -42,13 +41,10 @@ goby::acomms::EvologicsDriver::~EvologicsDriver()
 
 void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 {
+    // copy config
     driver_cfg_ = cfg;
 
     glog.is(DEBUG3) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
-
-    driver_cfg_.set_line_delimiter("\r");
-
-
 
     if(startup_done_)
     {
@@ -56,22 +52,24 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
         return;
     }
 
+    // set line delimiter
+    driver_cfg_.set_line_delimiter(LINE_DELIMITER);
+
     // CL: Yet to define any extensions for our driver/protobuf
     // Would modify settings accordingly here
 
     if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
+        std::cout << "startup reset client" <<  std::endl;
         client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
         client_->start();
-        std::cout << "TEST" << std::endl;
     }
 
     startup_done_ = true;
 
-    // driver_cfg_.set_line_delimiter("\r");
-
     //set local modem id (mac address)
     modem_init();
-    // std::cout << "complete init function" << std::endl;
+    
+    std::cout << "completed init function" << std::endl;
 }
 
 
@@ -80,7 +78,10 @@ void goby::acomms::EvologicsDriver::modem_init()
     std::cout << "call modem_start" << std::endl;
     modem_start(driver_cfg_);
     std::cout << "complete modem_start" << std::endl;
+
+    std::cout << "call do_work" << std::endl;
     do_work();
+
 /*
     int i = 0;
     while((i + 100) / (1000/pause_ms) > start_timeout) {
@@ -131,21 +132,28 @@ void goby::acomms::EvologicsDriver::establish_connection()
     return;
 }
 
+
+/*
+ * do_work runs multiple times a second to do the actual
+ * writing of messages to the modem, and to read what comes in
+ */
 void goby::acomms::EvologicsDriver::do_work()
 {
-    double now = goby_time<double>();
+//    double now = goby_time<double>();
 
-    std::cout<< "AT?S" << std::endl;
-    // on transmit
-    modem_write("AT?S");
-    sleep(1000);
+    // test sending commands
+    std::cout<< "Calling modem_write(\"+++AT?S\")" << std::endl;
+    modem_write("+++AT?S");
+    
+    // sleep one second to give modem_write enough time to run everything
+    sleep(1);
 
-    /*read in whatever is sent to the modem and print to console*/
+    // read in whatever is sent to this modem and print to console
     std::string in;
+    std::cout << "start while for read in" << std::endl;
     while(1) {
-        std::cout << "enter while loop" << std::endl;
-        if(modem_read(&in))
-            std::cout << "read in from modem " << in << std::endl;
+        while(modem_read(&in))
+            std::cout << "read in from modem: " << in << std::endl;
     }
     
     // on receive
