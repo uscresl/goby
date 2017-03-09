@@ -143,7 +143,9 @@ void goby::acomms::EvologicsDriver::do_work()
 
     // test sending commands
     std::cout<< "Calling modem_write(\"+++AT?S\")" << std::endl;
-    modem_write("+++AT?S");
+    modem_write("+++");
+    sleep(1);
+    modem_write("AT?S");
     
     // sleep one second to give modem_write enough time to run everything
     sleep(1);
