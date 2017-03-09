@@ -140,18 +140,39 @@ void goby::acomms::EvologicsDriver::establish_connection()
 void goby::acomms::EvologicsDriver::do_work()
 {
 //    double now = goby_time<double>();
-
+    std::string in;
     // test sending commands
     std::cout<< "Calling modem_write(\"+++AT?S\")" << std::endl;
+    // sleep(1);
     modem_write("+++");
     sleep(1);
+    {
+        int sleepInterval = 0; 
+        while(sleepInterval < 4000) {
+            while(modem_read(&in))
+                std::cout << "read in from modem: " << in << std::endl;
+            usleep(1000);
+            sleepInterval++;
+        }
+    }
     modem_write("AT?S");
     
     // sleep one second to give modem_write enough time to run everything
     sleep(1);
 
+    {
+        int sleepInterval = 0; 
+        while(sleepInterval < 6000) {
+            while(modem_read(&in))
+                std::cout << "read in from modem: " << in << std::endl;
+            usleep(1000);
+            sleepInterval++;
+        }
+    }
+    // modem_write("ATO");
+    // sleep(1);
     // read in whatever is sent to this modem and print to console
-    std::string in;
+    
     std::cout << "start while for read in" << std::endl;
     while(1) {
         while(modem_read(&in))
