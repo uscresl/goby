@@ -14,8 +14,6 @@ using goby::acomms::operator<<;
 void handle_data_receive(const goby::acomms::protobuf::ModemTransmission& msg);
 
 int main(int argc, char* argv[]) {
-
-
     // Input handling
     // CL: Probably only need tty for port, name for glog, and modem id for testing
     // CL: We can add more checks later if necessary
@@ -33,24 +31,26 @@ int main(int argc, char* argv[]) {
     // 1
     // Initialize a base driver and cfg
     // CL: To be configured later
-    goby::acomms::EvologicsDriver* driver = new goby::acomms::EvologicsDriver;
+    goby::acomms::EvologicsDriver * driver = new goby::acomms::EvologicsDriver;
+
     goby::acomms::protobuf::DriverConfig cfg;
 
-    // Configure ethernet connection here
     cfg.set_modem_id(goby::util::as<uint32_t>(argv[2]));  // CL: user input id
+
+    // Configure ethernet connection here
     cfg.set_connection_type(goby::acomms::protobuf::DriverConfig::CONNECTION_TCP_AS_CLIENT);
     cfg.set_tcp_server(argv[3]);
-
-
-    cfg.set_reconnect_interval(100);
     cfg.set_tcp_port(goby::util::as<uint32_t>(argv[4]));  // CL: user input port
 
+    cfg.set_reconnect_interval(100);
+
     // Connect on completion
-    goby::acomms::connect(&driver->signal_receive, &handle_data_receive);
+//    goby::acomms::connect(&driver->signal_receive, &handle_data_receive);
 
     // 2
     // Start up
     driver->startup(cfg);
+    
 /*
     // 3
     // Initiate transmission
@@ -81,6 +81,7 @@ int main(int argc, char* argv[]) {
 */
 
     // END
+    std::cout << "end: delete driver" << std::endl;
     delete driver;
     return 0;
 }

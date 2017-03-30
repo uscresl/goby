@@ -34,6 +34,7 @@ goby::util::LineBasedInterface::LineBasedInterface(const std::string& delimiter)
         throw Exception("Line based comms started with null string as delimiter!");
     
     delimiter_ = delimiter;
+    
     io_launcher_.reset(new IOLauncher(io_service_));
 }
 
@@ -106,8 +107,18 @@ bool goby::util::LineBasedInterface::readline(std::string* s, AccessOrder order 
 // pass the write data via the io service in the other thread
 void goby::util::LineBasedInterface::write(const protobuf::Datagram& msg)
 { 
-    std::cout << "LineBasedInterface writing " << msg.data() << std::endl;
+    std::cout << "LineBasedInterface writing: " << msg.data() << std::endl;
     // std::cout << "LineBasedInterface writing " << *msg << std::endl;
+    std::cout << "with delimiter: ";
+    if ( delimiter_ == "\r\n" )
+      std::cout << "\\r\\n";
+    else if ( delimiter_ == "\r" )
+      std::cout << "\\r";
+    else if ( delimiter_ == "\n" )
+      std::cout << "\\n";
+    else
+      std::cout << "err";
+    std::cout << '\n' << std::endl;
     
     io_service_.post(boost::bind(&LineBasedInterface::do_write, this, msg)); 
 }
