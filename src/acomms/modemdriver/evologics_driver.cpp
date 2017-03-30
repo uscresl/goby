@@ -1,8 +1,14 @@
 /*
- * CLIFFORD LEE
- *
- * evologics_driver.cpp
- */
+* UPDATES:
+*   -successful communication to/from modem
+*   -addition of line delimiter ("\n") to end of string in modem_write
+*    fixed previous issues with not recognizing data mode/data being sent/etc
+*
+* CHANGES TO BE MADE:
+*   -in startup function, set modem to data mode
+*   -in shutdown function, reset modem
+*
+*/
 
 #include <sstream>
 #include <iostream>
@@ -38,7 +44,7 @@ goby::acomms::EvologicsDriver::~EvologicsDriver()
 {
 }
 
-
+//TODO: set modem to data mode
 void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 {
     // copy config
@@ -100,6 +106,7 @@ void goby::acomms::EvologicsDriver::modem_init()
    // }
 }
 
+//TODO: reset the modem here
 void goby::acomms::EvologicsDriver::shutdown()
 {
     //put modem into low power state (how to do this)
@@ -144,8 +151,11 @@ void goby::acomms::EvologicsDriver::do_work()
     // test sending commands
     std::cout<< "Calling modem_write(\"+++AT?S\")" << std::endl;
     // sleep(1);
-    modem_write("+++");
+
+    modem_write("+++AT?S\n");
     sleep(1);
+    // modem_write("+++\n");
+    // sleep(1);
     {
         int sleepInterval = 0; 
         while(sleepInterval < 4000) {
@@ -155,7 +165,7 @@ void goby::acomms::EvologicsDriver::do_work()
             sleepInterval++;
         }
     }
-    modem_write("AT?S");
+    // modem_write("AT?S\n");
     
     // sleep one second to give modem_write enough time to run everything
     sleep(1);
@@ -164,11 +174,15 @@ void goby::acomms::EvologicsDriver::do_work()
         int sleepInterval = 0; 
         while(sleepInterval < 6000) {
             while(modem_read(&in))
-                std::cout << "read in from modem: " << in << std::endl;
+                std::cout << "read1 in from modem: " << in << std::endl;
             usleep(1000);
             sleepInterval++;
         }
     }
+
+    modem_write("ATO\n");
+    sleep(1);
+    modem_write("hello\n");
     // modem_write("ATO");
     // sleep(1);
     // read in whatever is sent to this modem and print to console
