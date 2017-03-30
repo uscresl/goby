@@ -143,7 +143,6 @@ void goby::acomms::EvologicsDriver::do_work()
     /*read in whatever is sent to the modem and print to console*/
     std::string in;
     while(1) {
-        std::cout << "enter while loop" << std::endl;
         if(modem_read(&in))
             std::cout << "read in from modem " << in << std::endl;
     }
