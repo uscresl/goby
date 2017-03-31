@@ -78,6 +78,9 @@ namespace goby
                 void initialize_talkers();
                 void establish_connection();
 
+                void write_message(std::string out);
+                void sendIM(std::string data, bool ack, int address);
+
                 static const std::string LINE_DELIMITER;
 
                 // std::map<std::string, SentenceIDs> sentence_id_map_;
