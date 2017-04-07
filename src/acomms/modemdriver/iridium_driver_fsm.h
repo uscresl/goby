@@ -203,7 +203,8 @@ namespace goby
 
                 static int count_;
             };
-            //Active state, not sure what boost::mpl::list<Command, NotOnCall> is
+            //Active state
+            //Command and NotOnCall--both states within Active, both are inner initial states
             struct Active: boost::statechart::simple_state< Active, IridiumDriverFSM,
                 boost::mpl::list<Command, NotOnCall> >
             {
@@ -214,7 +215,7 @@ namespace goby
             };
 
             // Command
-            //orthogonal?? (revisit)
+            //within Command, there are two orthogonal initial states: Configure and SBD
             struct Command : boost::statechart::simple_state<Command, Active::orthogonal<0>,
                 boost::mpl::list<Configure, SBD> >,
                 StateNotify
@@ -230,6 +231,7 @@ namespace goby
                     { }
                     ~Command() { }
                     //if action EvOnline, transition from Command state to Online state
+                    //if
                     typedef boost::mpl::list<
                         boost::statechart::in_state_reaction< EvRxSerial, Command, &Command::in_state_react >,
                         boost::statechart::in_state_reaction< EvTxSerial, Command, &Command::in_state_react >,
@@ -274,7 +276,7 @@ namespace goby
                     enum { RETRIES_BEFORE_RESET = 3 };
                     std::string sbd_rx_buffer_;
                 };
-
+              //if in Configure state and receive event EvAtEmpty, switch to Ready state
             struct Configure : boost::statechart::state<Configure, Command::orthogonal<0> >, StateNotify
             {
                 typedef boost::mpl::list<
