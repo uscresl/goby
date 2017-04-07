@@ -207,13 +207,14 @@ namespace goby
             struct Active: boost::statechart::simple_state< Active, IridiumDriverFSM,
                 boost::mpl::list<Command, NotOnCall> >
             {
-                //given this state
+                //given this state (Active), when EvReset is hit, transition to Active (self loop)
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvReset, Active >
                     > reactions;
             };
 
             // Command
+            //orthogonal?? (revisit)
             struct Command : boost::statechart::simple_state<Command, Active::orthogonal<0>,
                 boost::mpl::list<Configure, SBD> >,
                 StateNotify
@@ -228,7 +229,7 @@ namespace goby
                     at_out_(AT_BUFFER_CAPACITY)
                     { }
                     ~Command() { }
-
+                    //if action EvOnline, transition from Command state to Online state
                     typedef boost::mpl::list<
                         boost::statechart::in_state_reaction< EvRxSerial, Command, &Command::in_state_react >,
                         boost::statechart::in_state_reaction< EvTxSerial, Command, &Command::in_state_react >,
