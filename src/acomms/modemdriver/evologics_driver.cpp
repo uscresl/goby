@@ -13,8 +13,6 @@
 #include <sstream>
 #include <iostream>
 
-// #include <dccl/bitset.h>
-
 #include "evologics_driver.h"
 
 #include "goby/common/logger.h"
@@ -26,12 +24,12 @@
 
 using goby::glog;
 using namespace goby::common::logger;
-
-using google::protobuf::uint32;
-using namespace google::protobuf;
 using namespace goby::common::tcolor;
 using goby::common::goby_time;
 using namespace goby::common::logger_lock;
+
+using google::protobuf::uint32;
+using namespace google::protobuf;
 
 std::string const goby::acomms::EvologicsDriver::LINE_DELIMITER = "\n";
 
@@ -61,9 +59,6 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // set line delimiter
     driver_cfg_.set_line_delimiter(LINE_DELIMITER);
 
-    // CL: Yet to define any extensions for our driver/protobuf
-    // Would modify settings accordingly here
-
     if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
         std::cout << "startup reset client" <<  std::endl;
         client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
@@ -74,8 +69,6 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
 
     //set local modem id (mac address)
     modem_init();
-    
-    std::cout << "completed init function" << std::endl;
 }
 
 
