@@ -156,6 +156,7 @@ namespace goby
             struct SBDReceive;
 
 // state machine
+      //when machine is initiated, goes into Active state
             struct IridiumDriverFSM : boost::statechart::state_machine<IridiumDriverFSM, Active >
             {
               public:
@@ -169,7 +170,7 @@ namespace goby
                     glog_ir_group_ = "iridiumdriver::" + goby::util::as<std::string>(count_);
                 }
 
-                //adds message to back of data_out_stream
+                // adds message to back of data_out_stream
                 void buffer_data_out(const goby::acomms::protobuf::ModemTransmission& msg);
 
                 // messages for the serial line at next opportunity
@@ -202,11 +203,11 @@ namespace goby
 
                 static int count_;
             };
-
+            //Active state, not sure what boost::mpl::list<Command, NotOnCall> is
             struct Active: boost::statechart::simple_state< Active, IridiumDriverFSM,
                 boost::mpl::list<Command, NotOnCall> >
             {
-
+                //given this state
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvReset, Active >
                     > reactions;
