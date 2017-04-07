@@ -52,18 +52,18 @@ namespace goby
                 csum += *it & 0xFF;
             return csum;
         }
-        
-        
+
+
         namespace fsm
         {
 
-            struct StateNotify 
+            struct StateNotify
             {
                 StateNotify(const std::string& name)
                 : name_(name)
                     {
                         glog.is(goby::common::logger::DEBUG1) && glog << group("iridiumdriver") << name_ << std::endl;
-                    } 
+                    }
                 ~StateNotify()
                     {
                         glog.is(goby::common::logger::DEBUG1) && glog << group("iridiumdriver") << "~" << name_ << std::endl;
@@ -71,23 +71,23 @@ namespace goby
             private:
                 std::string name_;
             };
-            
-            
+
+
             // events
             struct EvRxSerial : boost::statechart::event< EvRxSerial > { std::string line; };
             struct EvTxSerial : boost::statechart::event< EvTxSerial > { };
 
             struct EvRxOnCallSerial : boost::statechart::event< EvRxOnCallSerial > { std::string line; };
             struct EvTxOnCallSerial : boost::statechart::event< EvTxOnCallSerial > { };
-            
+
             struct EvAck : boost::statechart::event< EvAck >
             {
                 EvAck(const std::string& response)
                     : response_(response) { }
-                
+
                 std::string response_;
             };
-            
+
             struct EvAtEmpty : boost::statechart::event< EvAtEmpty > {};
             struct EvReset : boost::statechart::event< EvReset > {};
 
@@ -104,7 +104,7 @@ namespace goby
 
             struct EvSendBye : boost::statechart::event< EvSendBye > {};
 
-            
+
             struct EvZMQConnect : boost::statechart::event< EvZMQConnect > {};
             struct EvZMQDisconnect : boost::statechart::event< EvZMQDisconnect > {};
 
@@ -118,8 +118,8 @@ namespace goby
                 std::string data_;
                 bool in_response_to_ring_alert_;
             };
-            
-            
+
+
             struct EvSBDSendBufferCleared : boost::statechart::event< EvSBDSendBufferCleared > {};
 
             struct EvSBDWriteReady : boost::statechart::event < EvSBDWriteReady > {};
@@ -131,7 +131,7 @@ namespace goby
                 std::string sbdi_;
             };
             struct EvSBDReceiveComplete : boost::statechart::event < EvSBDReceiveComplete > {};
-            
+
             // pre-declare
             struct Active;
             struct Command;
@@ -141,7 +141,7 @@ namespace goby
             struct Dial;
             struct HangingUp;
             struct PostDisconnected;
-            
+
             struct Online;
             struct OnCall;
             struct OnZMQCall;
@@ -154,9 +154,9 @@ namespace goby
             struct SBDWrite;
             struct SBDTransmit;
             struct SBDReceive;
-            
+
 // state machine
-            struct IridiumDriverFSM : boost::statechart::state_machine<IridiumDriverFSM, Active > 
+            struct IridiumDriverFSM : boost::statechart::state_machine<IridiumDriverFSM, Active >
             {
               public:
               IridiumDriverFSM(const protobuf::DriverConfig& driver_cfg)
@@ -168,9 +168,10 @@ namespace goby
                     ++count_;
                     glog_ir_group_ = "iridiumdriver::" + goby::util::as<std::string>(count_);
                 }
-                
+
+                //adds message to back of data_out_stream
                 void buffer_data_out(const goby::acomms::protobuf::ModemTransmission& msg);
-                
+
                 // messages for the serial line at next opportunity
                 boost::circular_buffer<std::string>& serial_tx_buffer() {return serial_tx_buffer_;}
 
@@ -179,17 +180,17 @@ namespace goby
 
                 // data that should (eventually) be sent out across the Iridium connection
                 boost::circular_buffer<protobuf::ModemTransmission>& data_out() {return data_out_;}
-                
+
                 const protobuf::DriverConfig& driver_cfg() const {return driver_cfg_;}
 
-                const std::string& glog_ir_group() const { return glog_ir_group_; }                
+                const std::string& glog_ir_group() const { return glog_ir_group_; }
 
-                
+
 
               private:
                 enum  { SERIAL_BUFFER_CAPACITY = 10 };
                 enum  { RECEIVED_BUFFER_CAPACITY = 10 };
-                
+
                 boost::circular_buffer<std::string> serial_tx_buffer_;
                 boost::circular_buffer<protobuf::ModemTransmission> received_;
                 const protobuf::DriverConfig& driver_cfg_;
@@ -198,7 +199,7 @@ namespace goby
                 boost::circular_buffer<protobuf::ModemTransmission> data_out_;
 
                 std::string glog_ir_group_;
-                
+
                 static int count_;
             };
 
@@ -210,7 +211,7 @@ namespace goby
                     boost::statechart::transition< EvReset, Active >
                     > reactions;
             };
-            
+
             // Command
             struct Command : boost::statechart::simple_state<Command, Active::orthogonal<0>,
                 boost::mpl::list<Configure, SBD> >,
@@ -224,9 +225,9 @@ namespace goby
                   Command()
                       : StateNotify("Command"),
                     at_out_(AT_BUFFER_CAPACITY)
-                    { } 
+                    { }
                     ~Command() { }
-                    
+
                     typedef boost::mpl::list<
                         boost::statechart::in_state_reaction< EvRxSerial, Command, &Command::in_state_react >,
                         boost::statechart::in_state_reaction< EvTxSerial, Command, &Command::in_state_react >,
@@ -249,15 +250,15 @@ namespace goby
                     {
                         at_out_.push_back(std::make_pair(ATSentenceMeta(), cmd));
                     }
-                
+
                     boost::circular_buffer< std::pair<ATSentenceMeta, std::string> >& at_out() {return at_out_;}
-                
+
                     void clear_sbd_rx_buffer() { sbd_rx_buffer_.clear(); }
 
                     void handle_sbd_rx(const std::string& in);
 
-                    
-                    
+
+
                   private:
                     enum  { AT_BUFFER_CAPACITY = 100 };
                     boost::circular_buffer< std::pair<ATSentenceMeta, std::string> > at_out_;
@@ -273,11 +274,11 @@ namespace goby
                 };
 
             struct Configure : boost::statechart::state<Configure, Command::orthogonal<0> >, StateNotify
-            {    
+            {
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvAtEmpty, Ready >
                     > reactions;
-                    
+
               Configure(my_context ctx) : my_base(ctx),
                     StateNotify("Configure")
                     {
@@ -297,14 +298,14 @@ namespace goby
                 ~Configure()
                 {
                     post_event(EvConfigured());
-                } 
+                }
             };
 
 
             struct Ready : boost::statechart::simple_state<Ready, Command::orthogonal<0> >, StateNotify
             {
               public:
-              Ready() : StateNotify("Ready") { } 
+              Ready() : StateNotify("Ready") { }
                 ~Ready() { }
 
                 boost::statechart::result react( const EvDial& )
@@ -319,7 +320,7 @@ namespace goby
                         return discard_event();
                     }
                 }
-                
+
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvRing, Answer >,
                     boost::statechart::custom_reaction< EvDial >
@@ -337,13 +338,13 @@ namespace goby
                 {
                     context<Command>().push_at_command("+++");
                     context<Command>().push_at_command("H");
-                } 
+                }
                 ~HangingUp() { }
-                
+
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvAtEmpty, Ready >
                     > reactions;
-                    
+
               private:
             };
 
@@ -355,36 +356,36 @@ namespace goby
                 {
                     glog.is(goby::common::logger::DEBUG1) && glog << group("iridiumdriver") << "Disconnected; checking error details: " << std::endl;
                     context<Command>().push_at_command("+CEER");
-                } 
+                }
                 ~PostDisconnected() { }
-                
+
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvAtEmpty, Ready >
                     > reactions;
-                    
+
               private:
             };
 
-            
+
             struct Dial : boost::statechart::state<Dial, Command::orthogonal<0> >, StateNotify
             {
                 typedef boost::mpl::list<
                     boost::statechart::custom_reaction< EvNoCarrier >
                     > reactions;
-    
+
               Dial(my_context ctx) : my_base(ctx),
                     StateNotify("Dial"),
                     dial_attempts_(0)
                 {
                     dial();
-                } 
+                }
                 ~Dial(){ }
-                
+
 
                 boost::statechart::result react( const EvNoCarrier& );
                 void dial();
-                
-                
+
+
               private:
                 int dial_attempts_;
             };
@@ -399,16 +400,16 @@ namespace goby
                 {
                     context<Command>().push_at_command("A");
                 }
-                ~Answer() { } 
+                ~Answer() { }
             };
 
 // Online
             struct Online : boost::statechart::simple_state<Online, Active::orthogonal<0> >, StateNotify
             {
-                
+
               Online() : StateNotify("Online") { }
                 ~Online() { }
-                
+
                 void in_state_react( const EvRxSerial& );
                 void in_state_react( const EvTxSerial& );
 
@@ -418,8 +419,8 @@ namespace goby
                     boost::statechart::in_state_reaction< EvRxSerial, Online, &Online::in_state_react >,
                     boost::statechart::in_state_reaction< EvTxSerial, Online, &Online::in_state_react >
                     > reactions;
-                
-                
+
+
             };
 
             // Orthogonal on-call / not-on-call
@@ -429,16 +430,16 @@ namespace goby
                     boost::statechart::transition< EvConnect, OnCall >,
                     boost::statechart::transition< EvZMQConnect, OnZMQCall >
                     > reactions;
-                
+
               NotOnCall() : StateNotify("NotOnCall") {}
-                ~NotOnCall() {} 
+                ~NotOnCall() {}
             };
 
             struct OnZMQCall : boost::statechart::simple_state<OnZMQCall, Active::orthogonal<1> >, StateNotify, OnCallBase
             {
-                
+
               OnZMQCall() : StateNotify("OnZMQCall") { }
-                ~OnZMQCall() {} 
+                ~OnZMQCall() {}
 
                 void in_state_react( const EvSendBye& )
                 {
@@ -449,7 +450,7 @@ namespace goby
                     boost::statechart::transition< EvZMQDisconnect, NotOnCall >,
                     boost::statechart::in_state_reaction< EvSendBye, OnZMQCall, &OnZMQCall::in_state_react >
                     > reactions;
-                
+
             };
 
             struct OnCall : boost::statechart::state<OnCall, Active::orthogonal<1> >, StateNotify, OnCallBase
@@ -462,14 +463,14 @@ namespace goby
                     // add a carriage return to clear out any garbage
                     // at the *beginning* of transmission
                     context<IridiumDriverFSM>().serial_tx_buffer().push_front("goby\r");
-                    
+
                     // connecting necessarily puts the DTE online
                     post_event(EvOnline());
-                } 
+                }
                 ~OnCall() {
                     // signal the disconnect event for the command state to handle
                     post_event(EvDisconnect());
-                } 
+                }
 
                 void in_state_react( const EvRxOnCallSerial& );
                 void in_state_react( const EvTxOnCallSerial& );
@@ -482,11 +483,11 @@ namespace goby
                     boost::statechart::in_state_reaction< EvTxOnCallSerial, OnCall, &OnCall::in_state_react >,
                     boost::statechart::in_state_reaction< EvSendBye, OnCall, &OnCall::in_state_react >
 
-                    > reactions;    
+                    > reactions;
 
               private:
-    
-           
+
+
             };
 
 
@@ -505,7 +506,7 @@ namespace goby
                     void clear_data() { data_.clear(); }
                     const std::string& data() const { return data_; }
                     bool in_response_to_ring_alert() const { return in_response_to_ring_alert_; }
-                    
+
                   private:
                     void set_data(const std::string& data)
                     {
@@ -514,7 +515,7 @@ namespace goby
                         else
                         {
                             unsigned int csum = sbd_csum(data);
-                            
+
                             const int bits_in_byte = 8;
                             data_ = data + std::string(1, (csum & 0xFF00) >> bits_in_byte) + std::string(1, (csum & 0xFF));
                         }
@@ -524,22 +525,22 @@ namespace goby
                     std::string data_;
                     bool in_response_to_ring_alert_;
                 };
-            
+
             /* struct SBDConfigure : boost::statechart::simple_state<SBDConfigure, SBD >, StateNotify */
             /* { */
             /*     typedef boost::mpl::list< */
             /*         boost::statechart::transition< EvConfigured, SBDReady > */
             /*         > reactions; */
-                
+
             /*   SBDConfigure() : StateNotify("SBDConfigure") */
             /*     { */
             /*     } */
             /*     ~SBDConfigure() { */
             /*     } */
-                
+
             /* }; */
-            
-                
+
+
             struct SBDReady: boost::statechart::simple_state<SBDReady, SBD >, StateNotify
             {
               typedef boost::mpl::list<
@@ -548,9 +549,9 @@ namespace goby
 
               SBDReady() : StateNotify("SBDReady") {
               }
-              
+
               ~SBDReady(){
-              }            
+              }
             };
 
             struct SBDClearBuffers : boost::statechart::state<SBDClearBuffers, SBD >, StateNotify
@@ -558,24 +559,24 @@ namespace goby
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvSBDSendBufferCleared, SBDWrite >
                     > reactions;
-                                
+
               SBDClearBuffers(my_context ctx) : my_base(ctx), StateNotify("SBDClearBuffers")
                 {
                     context<Command>().clear_sbd_rx_buffer();
                     context<Command>().push_at_command("+SBDD2");
                 }
-                
+
                 ~SBDClearBuffers()
                 {
                 }
             };
-            
-            
-            
-            
+
+
+
+
             struct SBDWrite : boost::statechart::state<SBDWrite, SBD >, StateNotify
             {
- 
+
               SBDWrite(my_context ctx) : my_base(ctx), StateNotify("SBDWrite")
                 {
                     if(context<SBD>().data().empty())
@@ -590,14 +591,14 @@ namespace goby
                         const int csum_bytes = 2;
                         context<Command>().push_at_command("+SBDWB=" + goby::util::as<std::string>(context<SBD>().data().size()-csum_bytes));
                     }
-                    
+
                 }
-                
+
                 void in_state_react( const EvSBDWriteReady& )
                 {
                     context<IridiumDriverFSM>().serial_tx_buffer().push_back(context<SBD>().data());
                 }
-                
+
 
                 ~SBDWrite() {
                 }
@@ -606,9 +607,9 @@ namespace goby
                     boost::statechart::in_state_reaction< EvSBDWriteReady, SBDWrite, &SBDWrite::in_state_react >,
                     boost::statechart::transition< EvSBDWriteComplete, SBDTransmit >
                     > reactions;
-                
-                
-                
+
+
+
             };
 
 
@@ -648,7 +649,7 @@ namespace goby
                         case 33: case 34:
                         case 36:
                         default:
-                            return "Reserved, but indicate MO session failure if used";                            
+                            return "Reserved, but indicate MO session failure if used";
                         case 10: return "GSS reported that the call did not complete in the allowed time";
                         case 11: return "MO message queue at the GSS is full";
                         case 12: return "MO message has too many segments";
@@ -663,17 +664,17 @@ namespace goby
                         case 35: return "Iridium 9523 is busy, unable to initiate call";
                     }
                 }
-                
-                
+
+
                 boost::statechart::result react( const EvSBDTransmitComplete& e)
                 {
                     // +SBDIX:<MO status>,<MOMSN>,<MT status>,<MTMSN>,<MT length>,<MT queued>
                     std::vector<std::string> sbdi_fields;
                     boost::algorithm::split(sbdi_fields, e.sbdi_, boost::is_any_of(":,"));
 
-                    std::for_each(sbdi_fields.begin(), sbdi_fields.end(), 
+                    std::for_each(sbdi_fields.begin(), sbdi_fields.end(),
                                   boost::bind(&boost::trim<std::string>, _1, std::locale()));
-                    
+
                     if(sbdi_fields.size() != 7)
                     {
                         glog.is(goby::common::logger::DEBUG1) && glog << group("iridiumdriver") << "Invalid +SBDI response: " << e.sbdi_ << std::endl;
@@ -681,15 +682,15 @@ namespace goby
                     }
                     else
                     {
-                        
+
                         enum { MO_STATUS = 1, MOMSN = 2, MT_STATUS = 3, MTMSN = 4, MT_LENGTH=5, MT_QUEUED = 6 };
                         enum { MT_STATUS_NO_MESSAGE = 0, MT_STATUS_RECEIVED_MESSAGE = 1, MT_STATUS_ERROR = 2 } ;
 
                         // 0-4 OK, 5-36 FAILURE
                         enum { MO_STATUS_SUCCESS_MAX = 4, MO_STATUS_FAILURE_MIN = 5 };
-                        
-                        
-                        
+
+
+
                         int mo_status = goby::util::as<int>(sbdi_fields[MO_STATUS]);
                         if(mo_status <= MO_STATUS_SUCCESS_MAX)
                         {
@@ -700,18 +701,18 @@ namespace goby
                             glog.is(goby::common::logger::WARN) && glog << group("iridiumdriver") << "Error sending SBD packet: " << mo_status_as_string(mo_status) << std::endl;
                             return transit<SBDReady>();
                         }
-                        
-                            
+
+
                         int mt_status = goby::util::as<int>(sbdi_fields[MT_STATUS]);
                         if(mt_status == MT_STATUS_RECEIVED_MESSAGE)
                             return transit<SBDReceive>();
                         else
                             return transit<SBDReady>();
                     }
-                    
+
                 }
             };
-            
+
             struct SBDReceive : boost::statechart::state<SBDReceive, SBD >, StateNotify
             {
                 typedef boost::mpl::list<
@@ -722,16 +723,15 @@ namespace goby
                 }
                 ~SBDReceive() {
                 }
-                
+
             };
 
 
 
-            
+
         }
     }
 }
 
 
 #endif
-
