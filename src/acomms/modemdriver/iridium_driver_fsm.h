@@ -231,7 +231,7 @@ namespace goby
                     { }
                     ~Command() { }
                     //if action EvOnline, transition from Command state to Online state
-                    //if
+                    //if EvRxSerial, EvTxSerial, or EvAck, execute Command struct's corresponding in_state_react function
                     typedef boost::mpl::list<
                         boost::statechart::in_state_reaction< EvRxSerial, Command, &Command::in_state_react >,
                         boost::statechart::in_state_reaction< EvTxSerial, Command, &Command::in_state_react >,
@@ -265,7 +265,7 @@ namespace goby
 
                   private:
                     enum  { AT_BUFFER_CAPACITY = 100 };
-                    boost::circular_buffer< std::pair<ATSentenceMeta, std::string> > at_out_;
+                    boost::circular_buffer< std::pair<ATSentenceMeta, std::string> > at_out_; //similar to queue
                     enum { COMMAND_TIMEOUT_SECONDS = 2,
                            DIAL_TIMEOUT_SECONDS = 60,
                            SBDIX_TIMEOUT_SECONDS = DIAL_TIMEOUT_SECONDS,
@@ -324,7 +324,7 @@ namespace goby
                         return discard_event();
                     }
                 }
-
+                //if EvRing, switch from Ready state (lineage: Active, Command -->) to Answer state
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvRing, Answer >,
                     boost::statechart::custom_reaction< EvDial >
@@ -344,7 +344,7 @@ namespace goby
                     context<Command>().push_at_command("H");
                 }
                 ~HangingUp() { }
-
+                //if in HangingUp state (lineage: Active, Command -->), switch to Ready state
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvAtEmpty, Ready >
                     > reactions;
@@ -362,7 +362,7 @@ namespace goby
                     context<Command>().push_at_command("+CEER");
                 }
                 ~PostDisconnected() { }
-
+                //if in PostDisconnected state (lineage: Active, Command -->), switch to Ready state
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvAtEmpty, Ready >
                     > reactions;
