@@ -133,7 +133,8 @@ namespace goby
             struct EvSBDReceiveComplete : boost::statechart::event < EvSBDReceiveComplete > {};
 
             // pre-declare
-            struct Active;
+            struct Active; //overarching
+
             struct Command;
             struct Configure;
             struct Ready;
@@ -316,7 +317,7 @@ namespace goby
                 {
                     if(state_downcast<const NotOnCall *>() != 0)
                     {
-                        return transit<Dial>();
+                        return transit<Dial>(); //transition to dial state
                     }
                     else
                     {
@@ -327,7 +328,7 @@ namespace goby
                 //if EvRing, switch from Ready state (lineage: Active, Command -->) to Answer state
                 typedef boost::mpl::list<
                     boost::statechart::transition< EvRing, Answer >,
-                    boost::statechart::custom_reaction< EvDial >
+                    boost::statechart::custom_reaction< EvDial > //react function shows custom_reaction
                     > reactions;
 
               private:
