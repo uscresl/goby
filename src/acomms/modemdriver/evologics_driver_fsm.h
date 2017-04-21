@@ -41,7 +41,7 @@ namespace goby
                 }
             private:
                 std::string name_;
-            }
+            };
             //events
             struct EvReset : boost::statechart::event< EvReset > {};
             struct EvATO : boost::statechart::event< EvATO > {};
@@ -155,7 +155,23 @@ namespace goby
                 void in_state_react( const EvRx& );
                 void in_state_react( const EvTx& );
                 void in_state_react( const EvAck& );
+
+                  Command()
+                      : StateNotify("Command" { }
+                    ~Command() { }
+                    typedef boost::mpl::list<
+                        boost::statechart::in_state_reaction< EvRx, Command, &Command::in_state_react >,
+                        boost::statechart::in_state_reaction< EvTx, Command, &Command::in_state_react >,
+                        boost::statechart::transition< EvATO, Online >,
+                        boost::statechart::in_state_reaction< EvAck, Command, &Command::in_state_react >
+                        > reactions;
+                    void push_at_command(const std::string& cmd)
+                    {
+                        at_out_.push_back(cmd);
+                    }
+                    boost::circular_buffer< std::string >& at_out() {return at_out_;}
               private:
+                boost::circular_buffer< std::string > at_out_;
             };
 
             /* Configure State */
