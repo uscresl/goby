@@ -108,7 +108,7 @@ namespace goby
               public:
 
               private:
-            }
+            };
         }
     }
 }
