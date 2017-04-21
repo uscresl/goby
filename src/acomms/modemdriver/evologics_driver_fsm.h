@@ -83,17 +83,15 @@ namespace goby
                 boost::circular_buffer<protobuf::ModemTransmission>& data_out() {return data_out_;}
 
                 const protobuf::DriverConfig& driver_cfg() const {return driver_cfg_;}
-
                 const std::string& glog_ir_group() const { return glog_ir_group_; }
 
 
               private:
                 boost::circular_buffer<protobuf::ModemTransmission> received_;
+                boost::circular_buffer<protobuf::ModemTransmission> data_out_; // Buffer capacity necessary?
+
                 const protobuf::DriverConfig& driver_cfg_;
-
-                //do we need a data buffer capacity here?
-                boost::circular_buffer<protobuf::ModemTransmission> data_out_;
-
+                
                 std::string glog_ir_group_;
 
                 static int count_;
@@ -165,8 +163,8 @@ namespace goby
                     typedef boost::mpl::list<
                         sc::in_state_reaction< EvRx, Command, &Command::in_state_react >,
                         sc::in_state_reaction< EvTx, Command, &Command::in_state_react >,
-                        sc::transition< EvATO, Online >,
-                        sc::in_state_reaction< EvAck, Command, &Command::in_state_react >
+                        sc::in_state_reaction< EvAck, Command, &Command::in_state_react >,
+                        sc::transition< EvATO, Online >
                         > reactions;
                     void push_at_command(const std::string& cmd)
                     {
@@ -187,24 +185,26 @@ namespace goby
                     sc::transition< EvStartupComplete, Ready >
                     > reactions;
 
+                // Constructor
                 Configure() :
                     StateNotify("Configure")
                 {
                     // Initial push of empty string to Command context
                     context<Command>().push_at_command("");
 
+                    // Fetch all cfg extensions and push to command
                     for (int i = 0,
                              n = context<EvologicsFSM>().driver_cfg().ExtensionSize(
                                  EvologicsConfig::config);
                          i < n; ++i)
                     {
-                        // Fetch all cfg extensions and push to command
                         context<Command>().push_at_command(
                             context<EvologicsDriver>().driver_cfg().GetExtension(
                                 EvologicsDriverConfig::config, i));
                     }
                 }
 
+                // Destructor
                 ~Configure()
                 {
                     post_event(EvConfigured());
