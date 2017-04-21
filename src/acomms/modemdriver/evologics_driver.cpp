@@ -59,6 +59,7 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // set line delimiter
     driver_cfg_.set_line_delimiter(LINE_DELIMITER);
 
+    //to add: if connection fails, then
     if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
         std::cout << "startup reset client" <<  std::endl;
         client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
@@ -89,7 +90,7 @@ void goby::acomms::EvologicsDriver::modem_init()
 
         // CL: Temporary hard coded value, to be defined in proto
         const int start_timeout = 2000;
-        
+
         if (i / (1000/pause_ms) > start_timeout)
             throw(ModemDriverException("Failed to startup.", protobuf::ModemDriverStatus::STARTUP_FAILED));
 */
@@ -144,7 +145,7 @@ void goby::acomms::EvologicsDriver::do_work()
     write_message("+++AT?S");
     sleep(1);
     {
-        int sleepInterval = 0; 
+        int sleepInterval = 0;
         while(sleepInterval < 4000) {
             while(modem_read(&in))
             usleep(1000);
@@ -152,12 +153,12 @@ void goby::acomms::EvologicsDriver::do_work()
         }
     }
     sendIM("hello", true, 1);
-    
+
     // // sleep one second to give modem_write enough time to run everything
     // sleep(1);
 
     // {
-    //     int sleepInterval = 0; 
+    //     int sleepInterval = 0;
     //     while(sleepInterval < 6000) {
     //         while(modem_read(&in))
     //             std::cout << "read1 in from modem: " << in << std::endl;
@@ -169,13 +170,13 @@ void goby::acomms::EvologicsDriver::do_work()
     // modem_write("ATO\n");
     // sleep(1);
     // modem_write("hello\n");
-    
+
     // std::cout << "start while for read in" << std::endl;
     // while(1) {
     //     while(modem_read(&in))
     //         std::cout << "read in from modem: " << in << std::endl;
     // }
-    
+
     // on receive
     // std::string in;
     // while (/*modem_read(&in)*/ 1) {
@@ -196,12 +197,12 @@ void goby::acomms::EvologicsDriver::sendIM(std::string data, bool ack, int addre
     int length = data.length();
     std::string ack_str = ack ? "ack" : "noack";
 
-    std::ostringstream oss;    
+    std::ostringstream oss;
 
     int sleepInterval = 0;
     std::string in = "";
     oss << "+++AT*SENDIM," << length << "," << address << "," << ack_str << "," << data;
-    
+
     write_message(oss.str());
     sleep(1);
 
@@ -218,6 +219,6 @@ void goby::acomms::EvologicsDriver::sendIM(std::string data, bool ack, int addre
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
 {
-    
+
     return;
 }
