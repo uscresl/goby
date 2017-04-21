@@ -28,6 +28,8 @@ namespace goby
     {
         namespace evologics
         {
+            namespace sc = boost::statechart;
+
             struct StateNotify
             {
                 StateNotify(const std::string& name)
@@ -43,13 +45,14 @@ namespace goby
                 std::string name_;
             };
             //events
-            struct EvReset : boost::statechart::event< EvReset > {};
-            struct EvATO : boost::statechart::event< EvATO > {};
-            struct EvCommandMode : boost::statechart::event< EvCommandMode > {};
-            struct EvATC : boost::statechart::event< EvATC > {};
-            struct EvRx : boost::statechart::event< EvRx > {}; // in state
-            struct EvTx : boost::statechart::event< EvTx > {};
-            struct EvAck : boost::statechart::event< EvAck > {};
+            struct EvReset : sc::event< EvReset > {};
+            struct EvATO : sc::event< EvATO > {};
+            struct EvCommandMode : sc::event< EvCommandMode > {};
+            struct EvATC : sc::event< EvATC > {};
+            struct EvRx : sc::event< EvRx > {}; // in state
+            struct EvTx : sc::event< EvTx > {};
+            struct EvAck : sc::event< EvAck > {};
+            struct EvConfigured : sc::event< EvConfigured > {};
             //states
             struct Active;
 
@@ -62,7 +65,7 @@ namespace goby
             struct Listen;
             struct TransmitData;
 
-            struct EvologicsFSM : boost::statechart::state_machine<EvologicsFSM, Active>
+            struct EvologicsFSM : sc::state_machine<EvologicsFSM, Active>
             {
               public:
               EvologicsFSM(const protobuf::DriverConfig& driver_cfg)
@@ -96,7 +99,7 @@ namespace goby
                 static int count_;
             };
 
-            struct Active: boost::statechart::simple_state< Active, EvologicsFSM,
+            struct Active: sc::simple_state< Active, EvologicsFSM,
                  Online >, StateNotify
             {
 
@@ -104,12 +107,12 @@ namespace goby
                     ~Active() { }
 
                     typedef boost::mpl::list<
-                        boost::statechart::transition< EvReset, Active >
+                        sc::transition< EvReset, Active >
                         > reactions;
             };
 
             //check if there's a way to receive instant messages while in burst data mode
-            struct Online: boost::statechart::simple_state<Online, Active, Listen>,
+            struct Online: sc::simple_state<Online, Active, Listen>,
                 StateNotify
             {
               Online() : StateNotify("Online")
@@ -119,12 +122,12 @@ namespace goby
                   ~Online() { }
 
                   typedef boost::mpl::list<
-                    boost::statechart::transition< EvCommandMode, Command >, //may have to add in deep history here
-                    boost::statechart::transition< EvATC, Command >
+                    sc::transition< EvCommandMode, Command >, //may have to add in deep history here
+                    sc::transition< EvATC, Command >
                     > reactions;
             };
 
-            struct Listen: boost::statechart::simple_state<Listen, Online>,
+            struct Listen: sc::simple_state<Listen, Online>,
                 StateNotify
             {
               Listen() : StateNotify("Listen")
@@ -136,7 +139,7 @@ namespace goby
                   typedef boost::mpl::list<> reactions;
             };
 
-            struct TransmitData: boost::statechart::simple_state<TransmitData, Online>,
+            struct TransmitData: sc::simple_state<TransmitData, Online>,
                 StateNotify
             {
               TransmitData() : StateNotify("TransmitData")
@@ -148,7 +151,7 @@ namespace goby
             };
 
             //can you receive burst data while in command mode?
-            struct Command: boost::statechart::simple_state<Command, Active, Configure>,
+            struct Command: sc::simple_state<Command, Active, Configure>,
                 StateNotify
             {
               public:
@@ -160,10 +163,10 @@ namespace goby
                       : StateNotify("Command" { }
                     ~Command() { }
                     typedef boost::mpl::list<
-                        boost::statechart::in_state_reaction< EvRx, Command, &Command::in_state_react >,
-                        boost::statechart::in_state_reaction< EvTx, Command, &Command::in_state_react >,
-                        boost::statechart::transition< EvATO, Online >,
-                        boost::statechart::in_state_reaction< EvAck, Command, &Command::in_state_react >
+                        sc::in_state_reaction< EvRx, Command, &Command::in_state_react >,
+                        sc::in_state_reaction< EvTx, Command, &Command::in_state_react >,
+                        sc::transition< EvATO, Online >,
+                        sc::in_state_reaction< EvAck, Command, &Command::in_state_react >
                         > reactions;
                     void push_at_command(const std::string& cmd)
                     {
@@ -174,13 +177,11 @@ namespace goby
                 boost::circular_buffer< std::string > at_out_;
             };
 
-<<<<<<< HEAD
-=======
             /* Configure State */
-            struct Configure : boost::statechart::simple_state<Configure, Command::orthogonal<0> >, StateNotify
+            struct Configure : sc::simple_state<Configure, Command >, StateNotify
             {
                 typedef boost::mpl::list<
-                    boost::statechart::transition< EvStartupComplete, Ready >
+                    sc::transition< EvStartupComplete, Ready >
                     > reactions;
 
                 Configure() :
@@ -194,7 +195,7 @@ namespace goby
                                  EvologicsConfig::config);
                          i < n; ++i)
                     {
-                       // TODO 
+                       // TODO
                     }
                 }
 
@@ -202,8 +203,9 @@ namespace goby
                 {
                     post_event(EvConfigured());
                 }
-            }
->>>>>>> 35bd0aea7a91a1efe68fe9071bceeac89f22cdec
+            };
+
+            struct Ready : sc
         }
     }
 }
