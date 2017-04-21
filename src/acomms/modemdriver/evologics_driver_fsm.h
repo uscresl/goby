@@ -45,6 +45,8 @@ namespace goby
             //events
             struct EvReset : boost::statechart::event< EvReset > {};
             struct EvATO : boost::statechart::event< EvATO > {};
+            struct EvCommandMode : boost::statechart::event< EvCommandMode > {};
+            struct EvATC : boost::statechart::event< EvATC > {};
             //states
             struct Active;
 
@@ -102,6 +104,45 @@ namespace goby
                         > reactions;
             };
 
+            struct Online: boost::statechart::simple_state<Online, Active, Listen>,
+                StateNotify
+            {
+              Online() : StateNotify("Online")
+                  {
+
+                  }
+                  ~Online() { }
+
+                  typedef boost::mpl::list<
+                    boost::statechart::transition< EvCommandMode, Command >, //may have to add in deep history here
+                    boost::statechart::transition< EvATC, Command >
+                    > reactions;
+            };
+
+            struct Listen: boost::statechart::simple_state<Listen, Online>,
+                StateNotify
+            {
+              Listen() : StateNotify("Listen")
+              {
+
+              }
+                  ~Listen() { }
+
+                  typedef boost::mpl::list<> reactions;
+            };
+
+            struct TransmitData: boost::statechart::simple_state<TransmitData, Online>,
+                StateNotify
+            {
+              TransmitData() : StateNotify("TransmitData")
+              {
+
+              }
+                  ~TransmitData() { }
+
+            };
+
+            //can you receive burst data while in command mode?
             struct Command: boost::statechart::simple_state<Command, Active, Configure>,
                 StateNotify
             {
