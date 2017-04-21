@@ -47,14 +47,18 @@ namespace goby
             struct EvATO : boost::statechart::event< EvATO > {};
             struct EvCommandMode : boost::statechart::event< EvCommandMode > {};
             struct EvATC : boost::statechart::event< EvATC > {};
+            struct EvRx : boost::statechart::event< EvRx > {}; // in state
+            struct EvTx : boost::statechart::event< EvTx > {};
+            struct EvAck : boost::statechart::event< EvAck > {};
             //states
             struct Active;
 
-            struct Command;
+            //should in state reactions be in ready state or command (overarching) state
+            struct Command; // messages are in instant message form
             struct Configure;
             struct Ready;
 
-            struct Online;
+            struct Online; // messages are in burst data form
             struct Listen;
             struct TransmitData;
 
@@ -104,6 +108,7 @@ namespace goby
                         > reactions;
             };
 
+            //check if there's a way to receive instant messages while in burst data mode
             struct Online: boost::statechart::simple_state<Online, Active, Listen>,
                 StateNotify
             {
@@ -147,7 +152,9 @@ namespace goby
                 StateNotify
             {
               public:
-
+                void in_state_react( const EvRx& );
+                void in_state_react( const EvTx& );
+                void in_state_react( const EvAck& );
               private:
             };
         }
