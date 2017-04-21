@@ -174,33 +174,6 @@ namespace goby
                 boost::circular_buffer< std::string > at_out_;
             };
 
-            /* Configure State */
-            struct Configure : boost::statechart::simple_state<Configure, Command::orthogonal<0> >, StateNotify
-            {
-                typedef boost::mpl::list<
-                    boost::statechart::transition< EvStartupComplete, Ready >
-                    > reactions;
-
-                Configure() :
-                    StateNotify("Configure")
-                {
-                    // Initial push of empty string to Command context
-                    context<Command>().push_at_command("");
-
-                    for (int i = 0,
-                             n = context<EvologicsFSM>().driver_cfg().ExtensionSize(
-                                 EvologicsConfig::config);
-                         i < n; ++i)
-                    {
-
-                    }
-                }
-
-                ~Configure()
-                {
-                    post_event(EvConfigured());
-                }
-            }
         }
     }
 }
