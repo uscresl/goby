@@ -53,6 +53,7 @@ namespace goby
             struct EvTx : sc::event< EvTx > {};
             struct EvAck : sc::event< EvAck > {};
             struct EvConfigured : sc::event< EvConfigured > {};
+            struct EvAT : sc::event< EvAt > {};
             //states
             struct Active;
 
@@ -148,7 +149,8 @@ namespace goby
 
             };
 
-            //can you receive burst data while in command mode?
+            //TODO can you receive burst data while in command mode?
+            //TODO find out what different command statements do while in Command vs Online modes
             struct Command: sc::simple_state<Command, Active, Configure>,
                 StateNotify
             {
@@ -211,7 +213,21 @@ namespace goby
                 }
             };
 
-            struct Ready : sc
+            struct Ready : sc::simple_state<Ready, Command>, StateNotify
+            {
+              public:
+              Ready() : StateNotify("Ready")
+              {
+
+              }
+                ~Ready() { }
+
+                typedef boost::mpl::list<
+                    sc::transition< EvAt, Configure >
+                    > reaction;
+              private:
+                
+            };
         }
     }
 }
