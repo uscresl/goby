@@ -180,6 +180,9 @@ namespace goby
             };
 
             /* Configure State */
+            /*
+             * Rough skeleton for Configure thus far
+             */
             struct Configure : sc::simple_state<Configure, Command >, StateNotify
             {
                 typedef boost::mpl::list<
@@ -197,7 +200,10 @@ namespace goby
                                  EvologicsConfig::config);
                          i < n; ++i)
                     {
-                       // TODO
+                        // Fetch all cfg extensions and push to command
+                        context<Command>().push_at_command(
+                            context<EvologicsDriver>().driver_cfg().GetExtension(
+                                EvologicsDriverConfig::config, i));
                     }
                 }
 
