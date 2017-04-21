@@ -54,6 +54,13 @@ namespace goby
             struct EvAck : sc::event< EvAck > {};
             struct EvConfigured : sc::event< EvConfigured > {};
             struct EvAT : sc::event< EvAt > {};
+            // TODO Will separate events for IM vs BD be necessary?
+            struct EvRxIM : sc::event < EvRxIM > {};
+            struct EvTxIM : sc::event < EvTxIM > {};
+            struct EvRxBD : sc::event < EvRxBD > {};
+            struct EvTxBD : sc::event < EvTxBD > {};
+            //
+
             //states
             struct Active;
 
@@ -129,13 +136,13 @@ namespace goby
             struct Listen: sc::simple_state<Listen, Online>,
                 StateNotify
             {
-              Listen() : StateNotify("Listen")
-              {
+                Listen() : StateNotify("Listen") {  }
+                ~Listen() { }
 
-              }
-                  ~Listen() { }
-
-                  typedef boost::mpl::list<> reactions;
+                // TODO create in_state_react for RxIM
+                typedef boost::mpl::list<
+                    sc::in_state_reaction< EvRxIM, Listen, &Listen::in_state_react >
+                    > reactions;
             };
 
             struct TransmitData: sc::simple_state<TransmitData, Online>,
@@ -188,8 +195,7 @@ namespace goby
                     > reactions;
 
                 // Constructor
-                Configure() :
-                    StateNotify("Configure")
+                Configure() : StateNotify("Configure")
                 {
                     // Initial push of empty string to Command context
                     context<Command>().push_at_command("");
