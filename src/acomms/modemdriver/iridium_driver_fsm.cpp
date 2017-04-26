@@ -54,12 +54,12 @@ void goby::acomms::fsm::Command::in_state_react(const EvRxSerial& e)
         handle_sbd_rx(in);
         return;
     }
-    
+
     boost::trim(in);
-    
+
     static const std::string connect = "CONNECT";
     static const std::string sbdi = "+SBDI";
-    
+
     if(in == "OK")
     {
         post_event(EvAck(in));
@@ -108,13 +108,13 @@ void goby::acomms::fsm::Command::in_state_react(const EvRxSerial& e)
     {
         post_event(EvSBDBeginData("", true));
     }
-    
-    
+
+
 }
 
 void goby::acomms::fsm::Command::handle_sbd_rx(const std::string& in)
 {
-    enum 
+    enum
     {
         SBD_FIELD_SIZE_BYTES = 2,
         SBD_BITS_IN_BYTE = 8,
@@ -125,7 +125,7 @@ void goby::acomms::fsm::Command::handle_sbd_rx(const std::string& in)
         sbd_rx_buffer_ = in.substr(1); // discard left over '\n' from last command
     else
         sbd_rx_buffer_ += in;
-    
+
     // need to build up message in pieces since we use \r delimiter
     if(sbd_rx_buffer_.size() < SBD_FIELD_SIZE_BYTES)
         return;
@@ -133,7 +133,7 @@ void goby::acomms::fsm::Command::handle_sbd_rx(const std::string& in)
     {
         unsigned sbd_rx_size = ((sbd_rx_buffer_[0] & 0xff) << SBD_BITS_IN_BYTE) | (sbd_rx_buffer_[1] & 0xff);
         glog.is(DEBUG1) && glog << group("iridiumdriver") << "SBD RX Size: " << sbd_rx_size << std::endl;
-        
+
         if(sbd_rx_buffer_.size() < (SBD_FIELD_SIZE_BYTES + sbd_rx_size))
         {
             return; // keep building up message
@@ -153,7 +153,7 @@ void goby::acomms::fsm::Command::handle_sbd_rx(const std::string& in)
             // clear out the checksum
             push_at_command("");
         }
-            
+
     }
 }
 
@@ -161,7 +161,7 @@ void goby::acomms::fsm::Command::handle_sbd_rx(const std::string& in)
 void goby::acomms::fsm::Command::in_state_react( const EvTxSerial& )
 {
     double now = goby_time<double>();
-    
+
     if(!at_out_.empty())
     {
         double timeout = COMMAND_TIMEOUT_SECONDS;
@@ -180,20 +180,20 @@ void goby::acomms::fsm::Command::in_state_react( const EvTxSerial& )
         static const std::string sbdi = "+SBDI";
         if(at_out_.front().second.compare(0, sbdi.size(), sbdi) == 0)
             timeout = SBDIX_TIMEOUT_SECONDS;
-        
-        
+
+
         if(at_out_.front().second == "+SBDRB")
             clear_sbd_rx_buffer();
 
-        
+
         if((at_out_.front().first.last_send_time_ + timeout) < now)
         {
             std::string at_command;
             if(at_out_.front().second != "+++")
                 at_command = "AT" + at_out_.front().second + "\r";
             else
-                at_command = at_out_.front().second;        
-            
+                at_command = at_out_.front().second;
+
             if(++at_out_.front().first.tries_ > RETRIES_BEFORE_RESET)
             {
                 glog.is(DEBUG1) && glog << group("iridiumdriver") << warn << "No valid response after " << RETRIES_BEFORE_RESET << " tries. Resetting state machine" << std::endl;
@@ -205,7 +205,7 @@ void goby::acomms::fsm::Command::in_state_react( const EvTxSerial& )
                 at_out_.front().first.last_send_time_ = now;
             }
         }
-        
+
     }
 }
 
@@ -242,16 +242,16 @@ void goby::acomms::fsm::Command::in_state_react( const EvAck & e)
                 }
                 return; // all followed by "OK" which will clear the sentence
             case '1':
-                return; 
+                return;
             case '2':
-                return; 
+                return;
             case '3':
-                return; 
+                return;
             default:
                 break;
         }
     }
-    
+
     if(!at_out().empty())
     {
         const std::string& last_at = at_out().front().second;
@@ -264,19 +264,19 @@ void goby::acomms::fsm::Command::in_state_react( const EvAck & e)
                     // 2015-08-18 - Iridium 9523 gave "OK" in response to a dial (as failure?)
                     // if this happens, assume it's a failure.
                 case 'D': post_event(EvNoCarrier()); break;
-                    
+
                 default:
                     break;
             }
         }
-        
+
         if(e.response_ == "READY")  // used for SBD
             post_event(EvSBDWriteReady());
-        
+
         at_out().pop_front();
         if(at_out().empty())
             post_event(EvAtEmpty());
-       
+
     }
     else
     {
@@ -290,7 +290,7 @@ boost::statechart::result goby::acomms::fsm::Dial::react( const EvNoCarrier& x)
     glog.is(DEBUG1) && glog  << group("iridiumdriver") << "Redialing in " << redial_wait_seconds << " seconds ..."  << std::endl;
 
     sleep(redial_wait_seconds);
-    
+
     const int max_attempts = context<IridiumDriverFSM>().driver_cfg().GetExtension(IridiumDriverConfig::dial_attempts);
     if(dial_attempts_ < max_attempts)
     {
@@ -300,10 +300,10 @@ boost::statechart::result goby::acomms::fsm::Dial::react( const EvNoCarrier& x)
     else
     {
         glog.is(DEBUG1) && glog <<  warn  << group("iridiumdriver") << "Failed to connect after " << max_attempts << " tries." << std::endl;
-                
+
         return transit<Ready>();
     }
-    
+
 }
 
 void  goby::acomms::fsm::Dial::dial()
@@ -313,7 +313,7 @@ void  goby::acomms::fsm::Dial::dial()
         "D" +
         context<IridiumDriverFSM>().driver_cfg().GetExtension(
             IridiumDriverConfig::remote).iridium_number());
-}    
+}
 
 
 void goby::acomms::fsm::OnCall::in_state_react(const EvRxOnCallSerial& e)
@@ -328,7 +328,7 @@ void goby::acomms::fsm::OnCall::in_state_react(const EvRxOnCallSerial& e)
     }
     else if(boost::trim_copy(in) == "goby")
     {
-        glog.is(DEBUG1) && glog << group("iridiumdriver") << "Detected start of Goby RUDICS call" << std::endl;        
+        glog.is(DEBUG1) && glog << group("iridiumdriver") << "Detected start of Goby RUDICS call" << std::endl;
     }
     else if(boost::trim_copy(in) == "bye")
     {
@@ -341,7 +341,7 @@ void goby::acomms::fsm::OnCall::in_state_react(const EvRxOnCallSerial& e)
         try
         {
             parse_rudics_packet(&bytes, in);
-            
+
             protobuf::ModemTransmission msg;
             msg.ParseFromString(bytes);
             context< IridiumDriverFSM >().received().push_back(msg);
@@ -376,7 +376,7 @@ void goby::acomms::fsm::OnCall::in_state_react( const EvTxOnCallSerial& )
 }
 
 void goby::acomms::fsm::OnCall::in_state_react( const EvSendBye& )
-{   
+{
     context<IridiumDriverFSM>().serial_tx_buffer().push_front("bye\r");
     set_bye_sent(true);
 }

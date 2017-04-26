@@ -59,6 +59,8 @@ namespace goby
             struct EvTxIM : sc::event < EvTxIM > {};
             struct EvRxBD : sc::event < EvRxBD > {};
             struct EvTxBD : sc::event < EvTxBD > {};
+            struct EvListen : sc::event < EvListen > {};
+            struct EvTransmit : sc::event < EvTransmit > {};
             //
 
             //states
@@ -99,7 +101,7 @@ namespace goby
                 boost::circular_buffer<protobuf::ModemTransmission> data_out_; // Buffer capacity necessary?
 
                 const protobuf::DriverConfig& driver_cfg_;
-                
+
                 std::string glog_ir_group_;
 
                 static int count_;
@@ -141,7 +143,8 @@ namespace goby
 
                 // TODO create in_state_react for RxIM
                 typedef boost::mpl::list<
-                    sc::in_state_reaction< EvRxIM, Listen, &Listen::in_state_react >
+                    sc::in_state_reaction< EvRxIM, Listen, &Listen::in_state_react >,
+                    sc::transition<EvTransmit, TransmitData>
                     > reactions;
             };
 
@@ -154,6 +157,9 @@ namespace goby
               }
                   ~TransmitData() { }
 
+              typedef boost::mpl::list<
+                  sc::transition<EvListen, Listen>
+                  > reactions;
             };
 
             //TODO can you receive burst data while in command mode?
@@ -232,7 +238,7 @@ namespace goby
                     sc::transition< EvAt, Configure >
                     > reaction;
               private:
-                
+
             };
         }
     }
