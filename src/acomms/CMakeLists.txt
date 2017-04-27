@@ -21,6 +21,7 @@ set(SRC
   modemdriver/abc_driver.cpp
   modemdriver/driver_base.cpp
   modemdriver/evologics_driver.cpp
+  modemdriver/evologics_driver_fsm.cpp
   modemdriver/mm_driver.cpp
   modemdriver/udp_driver.cpp
   modemdriver/rudics_packet.cpp

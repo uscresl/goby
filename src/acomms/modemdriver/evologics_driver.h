@@ -12,9 +12,11 @@
 #include "goby/util/linebasedcomms/tcp_client.h"
 
 #include "goby/acomms/modemdriver/driver_base.h"
-#include "goby/acomms/protobuf/evologics_driver.pb.h"
+// #include "goby/acomms/protobuf/evologics_driver.pb.h"
 
 #include "goby/acomms/acomms_helpers.h"
+
+#include "goby/acomms/evologics_driver_fsm.h"
 
 namespace goby
 {
@@ -62,7 +64,7 @@ namespace goby
                 // }
 
                 // Configuration
-                fsm::IridiumDriverFSM fsm_;
+                evologics::fsm::EvologicsDriverFSM fsm_;
                 protobuf::DriverConfig driver_cfg_;
 
                 // Set up driver as TCP client

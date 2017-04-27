@@ -1,5 +1,5 @@
-#ifndef EvologicsDriverFSM20170419H
-#define EvologicsDriverFSM20170419H
+#ifndef EvologicsDriverFSMH
+#define EvologicsDriverFSMH
 
 #include <boost/circular_buffer.hpp>
 
@@ -15,12 +15,12 @@
 #include <boost/format.hpp>
 #include <iostream>
 
-#include "goby/acomms/acomms_constants.h"
+#include "goby/acomms/acomms_constants.h"   
 #include "goby/util/binary.h"
 #include "goby/common/time.h"
 
 #include "goby/acomms/protobuf/modem_message.pb.h"
-#include "goby/acomms/protobuf/evologics.pb.h"
+#include "goby/acomms/protobuf/evologics_driver.pb.h"
 
 namespace goby
 {
@@ -28,218 +28,225 @@ namespace goby
     {
         namespace evologics
         {
-            namespace sc = boost::statechart;
-
-            struct StateNotify
+            namespace fsm 
             {
-                StateNotify(const std::string& name)
-                : name_(name)
+                namespace sc = boost::statechart;
+
+                struct StateNotify
                 {
-                    glog.is(goby::common::logger::DEBUG1) && glog << group("evologicsdriver") << name_ << std::endl;
-                }
-                ~StateNotify()
+                    StateNotify(const std::string& name)
+                    : name_(name)
+                    {
+                        glog.is(goby::common::logger::DEBUG1) && glog << group("evologicsdriver") << name_ << std::endl;
+                    }
+                    ~StateNotify()
+                    {
+                        glog.is(goby::common::logger::DEBUG1) && glog << group("evologicsdriver") << "~" << name_ << std::endl;
+                    }
+                private:
+                    std::string name_;
+                };
+                //events
+                struct EvReset : sc::event< EvReset > {};
+                struct EvStartupComplete : sc::event< EvStartupComplete > {};
+                struct EvATO : sc::event< EvATO > {};
+                struct EvCommandMode : sc::event< EvCommandMode > {};
+                struct EvATC : sc::event< EvATC > {};
+                struct EvRx : sc::event< EvRx > {}; // in state
+                struct EvTx : sc::event< EvTx > {};
+                struct EvAck : sc::event< EvAck > {};
+                struct EvConfigured : sc::event< EvConfigured > {};
+                struct EvAt : sc::event< EvAt > {};
+                // TODO Will separate events for IM vs BD be necessary?
+                struct EvRxIM : sc::event < EvRxIM > {};
+                struct EvTxIM : sc::event < EvTxIM > {};
+                struct EvRxBD : sc::event < EvRxBD > {};
+                struct EvTxBD : sc::event < EvTxBD > {};
+                struct EvListen : sc::event < EvListen > {};
+                struct EvTransmit : sc::event < EvTransmit > {};
+                //
+
+                //states
+                struct Active;
+
+                //should in state reactions be in ready state or command (overarching) state
+                struct Command; // messages are in instant message form
+                struct Configure;
+                struct Ready;
+
+                struct Online; // messages are in burst data form
+                struct Listen;
+                struct TransmitData;
+
+                struct EvologicsDriverFSM : sc::state_machine<EvologicsFSM, Active>
                 {
-                    glog.is(goby::common::logger::DEBUG1) && glog << group("evologicsdriver") << "~" << name_ << std::endl;
-                }
-            private:
-                std::string name_;
-            };
-            //events
-            struct EvReset : sc::event< EvReset > {};
-            struct EvATO : sc::event< EvATO > {};
-            struct EvCommandMode : sc::event< EvCommandMode > {};
-            struct EvATC : sc::event< EvATC > {};
-            struct EvRx : sc::event< EvRx > {}; // in state
-            struct EvTx : sc::event< EvTx > {};
-            struct EvAck : sc::event< EvAck > {};
-            struct EvConfigured : sc::event< EvConfigured > {};
-            struct EvAT : sc::event< EvAt > {};
-            // TODO Will separate events for IM vs BD be necessary?
-            struct EvRxIM : sc::event < EvRxIM > {};
-            struct EvTxIM : sc::event < EvTxIM > {};
-            struct EvRxBD : sc::event < EvRxBD > {};
-            struct EvTxBD : sc::event < EvTxBD > {};
-            struct EvListen : sc::event < EvListen > {};
-            struct EvTransmit : sc::event < EvTransmit > {};
-            //
+                  public:
+                  EvologicsDriverFSM(const protobuf::DriverConfig& driver_cfg) :
+                    driver_cfg_(driver_cfg)
+                  {
+                      ++count_;
+                      glog_ir_group_ = "evologicsdriver::" + goby::util::as<std::string>(count_);
+                  }
+                    //adds message to back of data_out_stream
+                    void buffer_data_out(const goby::acomms::protobuf::ModemTransmission& msg);
 
-            //states
-            struct Active;
+                    // received messages to be passed up out of the ModemDriver
+                    boost::circular_buffer<protobuf::ModemTransmission>& received() {return received_;};
 
-            //should in state reactions be in ready state or command (overarching) state
-            struct Command; // messages are in instant message form
-            struct Configure;
-            struct Ready;
+                    // data that should (eventually) be sent out across the Evologics connection (not sure if necessary)
+                    boost::circular_buffer<protobuf::ModemTransmission>& data_out() {return data_out_;}
 
-            struct Online; // messages are in burst data form
-            struct Listen;
-            struct TransmitData;
-
-            struct EvologicsFSM : sc::state_machine<EvologicsFSM, Active>
-            {
-              public:
-              EvologicsFSM(const protobuf::DriverConfig& driver_cfg)
-              {
-                  ++count_;
-                  glog_ir_group_ = "evologicsdriver::" + goby::util::as<std::string>(count_);
-              }
-                //adds message to back of data_out_stream
-                void buffer_data_out(const goby::acomms::protobuf::ModemTransmission& msg);
-
-                // received messages to be passed up out of the ModemDriver
-                boost::circular_buffer<protobuf::ModemTransmission>& received() {return received_;};
-
-                // data that should (eventually) be sent out across the Evologics connection (not sure if necessary)
-                boost::circular_buffer<protobuf::ModemTransmission>& data_out() {return data_out_;}
-
-                const protobuf::DriverConfig& driver_cfg() const {return driver_cfg_;}
-                const std::string& glog_ir_group() const { return glog_ir_group_; }
+                    const protobuf::DriverConfig& driver_cfg() const {return driver_cfg_;}
+                    const std::string& glog_ir_group() const { return glog_ir_group_; }
 
 
-              private:
-                boost::circular_buffer<protobuf::ModemTransmission> received_;
-                boost::circular_buffer<protobuf::ModemTransmission> data_out_; // Buffer capacity necessary?
+                  private:
+                    boost::circular_buffer<protobuf::ModemTransmission> received_;
+                    boost::circular_buffer<protobuf::ModemTransmission> data_out_; // Buffer capacity necessary?
 
-                const protobuf::DriverConfig& driver_cfg_;
+                    const protobuf::DriverConfig& driver_cfg_;
 
-                std::string glog_ir_group_;
+                    std::string glog_ir_group_;
 
-                static int count_;
-            };
+                    static int count_;
+                };
 
-            struct Active: sc::simple_state< Active, EvologicsFSM,
-                 Online >, StateNotify
-            {
+                struct Active: sc::simple_state< Active, EvologicsDriverFSM,
+                     Online >, StateNotify
+                {
 
-                Active() : StateNotify("Active") { }
-                    ~Active() { }
+                    Active() : StateNotify("Active") { }
+                        ~Active() { }
 
-                    typedef boost::mpl::list<
-                        sc::transition< EvReset, Active >
+                        typedef boost::mpl::list<
+                            sc::transition< EvReset, Active >
+                            > reactions;
+                };
+
+                //check if there's a way to receive instant messages while in burst data mode
+                struct Online: sc::simple_state<Online, Active, Listen>,
+                    StateNotify
+                {
+                  Online() : StateNotify("Online")
+                      {
+
+                      }
+                      ~Online() { }
+
+                      typedef boost::mpl::list<
+                        sc::transition< EvCommandMode, Command >, //may have to add in deep history here
+                        sc::transition< EvATC, Command >
                         > reactions;
-            };
+                };
 
-            //check if there's a way to receive instant messages while in burst data mode
-            struct Online: sc::simple_state<Online, Active, Listen>,
-                StateNotify
-            {
-              Online() : StateNotify("Online")
+                struct Listen: sc::simple_state<Listen, Online>,
+                    StateNotify
+                {
+                    Listen() : StateNotify("Listen") {  }
+                    ~Listen() { }
+
+                    void in_state_react(const EvRxIM& e);
+                    // TODO create in_state_react for RxIM
+                    typedef boost::mpl::list<
+                        sc::in_state_reaction< EvRxIM, Listen, &Listen::in_state_react >,
+                        sc::transition<EvTransmit, TransmitData>
+                        > reactions;
+                };
+
+                struct TransmitData: sc::simple_state<TransmitData, Online>,
+                    StateNotify
+                {
+                  TransmitData() : StateNotify("TransmitData")
                   {
 
                   }
-                  ~Online() { }
+                      ~TransmitData() { }
 
                   typedef boost::mpl::list<
-                    sc::transition< EvCommandMode, Command >, //may have to add in deep history here
-                    sc::transition< EvATC, Command >
-                    > reactions;
-            };
+                      sc::transition<EvListen, Listen>
+                      > reactions;
+                };
 
-            struct Listen: sc::simple_state<Listen, Online>,
-                StateNotify
-            {
-                Listen() : StateNotify("Listen") {  }
-                ~Listen() { }
+                //TODO can you receive burst data while in command mode?
+                //TODO find out what different command statements do while in Command vs Online modes
+                struct Command: sc::simple_state<Command, Active, Configure>,
+                    StateNotify
+                {
+                  public:
+                    void in_state_react( const EvRx& );
+                    void in_state_react( const EvTx& );
+                    void in_state_react( const EvAck& );
 
-                // TODO create in_state_react for RxIM
-                typedef boost::mpl::list<
-                    sc::in_state_reaction< EvRxIM, Listen, &Listen::in_state_react >,
-                    sc::transition<EvTransmit, TransmitData>
-                    > reactions;
-            };
+                      Command()
+                          : StateNotify("Command") { }
+                        ~Command() { }
+                        typedef boost::mpl::list<
+                            sc::in_state_reaction< EvRx, Command, &Command::in_state_react >,
+                            sc::in_state_reaction< EvTx, Command, &Command::in_state_react >,
+                            sc::in_state_reaction< EvAck, Command, &Command::in_state_react >,
+                            sc::transition< EvATO, Online >
+                            > reactions;
+                        void push_at_command(const std::string& cmd)
+                        {
+                            at_out_.push_back(cmd);
+                        }
+                        boost::circular_buffer< std::string >& at_out() {return at_out_;}
+                  private:
+                    boost::circular_buffer< std::string > at_out_;
+                };
 
-            struct TransmitData: sc::simple_state<TransmitData, Online>,
-                StateNotify
-            {
-              TransmitData() : StateNotify("TransmitData")
-              {
-
-              }
-                  ~TransmitData() { }
-
-              typedef boost::mpl::list<
-                  sc::transition<EvListen, Listen>
-                  > reactions;
-            };
-
-            //TODO can you receive burst data while in command mode?
-            //TODO find out what different command statements do while in Command vs Online modes
-            struct Command: sc::simple_state<Command, Active, Configure>,
-                StateNotify
-            {
-              public:
-                void in_state_react( const EvRx& );
-                void in_state_react( const EvTx& );
-                void in_state_react( const EvAck& );
-
-                  Command()
-                      : StateNotify("Command" { }
-                    ~Command() { }
+                /* Configure State */
+                /*
+                 * Rough skeleton for Configure thus far
+                 */
+                struct Configure : sc::simple_state<Configure, Command >, StateNotify
+                {
                     typedef boost::mpl::list<
-                        sc::in_state_reaction< EvRx, Command, &Command::in_state_react >,
-                        sc::in_state_reaction< EvTx, Command, &Command::in_state_react >,
-                        sc::in_state_reaction< EvAck, Command, &Command::in_state_react >,
-                        sc::transition< EvATO, Online >
+                        sc::transition< EvStartupComplete, Ready >
                         > reactions;
-                    void push_at_command(const std::string& cmd)
+
+                    // Constructor
+                    Configure() : StateNotify("Configure")
                     {
-                        at_out_.push_back(cmd);
+                        // Initial push of empty string to Command context
+                        context<Command>().push_at_command("");
+
+                        // Fetch all cfg extensions and push to command
+                        // for (int i = 0,
+                        //          n = context<EvologicsDriverFSM>().driver_cfg().ExtensionSize(
+                        //              EvologicsDriverConfig::config);
+                        //      i < n; ++i)
+                        // {
+                        //     context<Command>().push_at_command(
+                        //         context<EvologicsDriver>().driver_cfg().GetExtension(
+                        //             EvologicsDriverConfig::config, i));
+                        // }
                     }
-                    boost::circular_buffer< std::string >& at_out() {return at_out_;}
-              private:
-                boost::circular_buffer< std::string > at_out_;
-            };
 
-            /* Configure State */
-            /*
-             * Rough skeleton for Configure thus far
-             */
-            struct Configure : sc::simple_state<Configure, Command >, StateNotify
-            {
-                typedef boost::mpl::list<
-                    sc::transition< EvStartupComplete, Ready >
-                    > reactions;
-
-                // Constructor
-                Configure() : StateNotify("Configure")
-                {
-                    // Initial push of empty string to Command context
-                    context<Command>().push_at_command("");
-
-                    // Fetch all cfg extensions and push to command
-                    for (int i = 0,
-                             n = context<EvologicsFSM>().driver_cfg().ExtensionSize(
-                                 EvologicsConfig::config);
-                         i < n; ++i)
+                    // Destructor
+                    ~Configure()
                     {
-                        context<Command>().push_at_command(
-                            context<EvologicsDriver>().driver_cfg().GetExtension(
-                                EvologicsDriverConfig::config, i));
+                        post_event(EvConfigured());
                     }
-                }
+                };
 
-                // Destructor
-                ~Configure()
+                struct Ready : sc::simple_state<Ready, Command>, StateNotify
                 {
-                    post_event(EvConfigured());
-                }
-            };
+                  public:
+                  Ready() : StateNotify("Ready")
+                  {
 
-            struct Ready : sc::simple_state<Ready, Command>, StateNotify
-            {
-              public:
-              Ready() : StateNotify("Ready")
-              {
+                  }
+                    ~Ready() { }
 
-              }
-                ~Ready() { }
+                    typedef boost::mpl::list<
+                        sc::transition< EvAt, Configure >
+                        > reaction;
+                  private:
 
-                typedef boost::mpl::list<
-                    sc::transition< EvAt, Configure >
-                    > reaction;
-              private:
-
-            };
+                };
+            }
         }
     }
 }
+#endif
