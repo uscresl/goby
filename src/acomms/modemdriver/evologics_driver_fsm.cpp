@@ -26,14 +26,3 @@ void fsm::Listen::in_state_react(const EvRxIM& e)
     glog.is(DEBUG1) && glog << e << std::endl;
 
 }
-
-
-void fsm::Ready::in_state_react(const EvRxComm& e)
-{
-    // TODO in state reaction for receiving a command
-    glog.is(DEBUG1) && glog << e << std::endl;
-
-    std::string in = e.line;
-
-    if(!at_out().empty() && at_out.front)
-}

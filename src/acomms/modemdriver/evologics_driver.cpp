@@ -31,10 +31,12 @@ using namespace goby::common::logger_lock;
 using google::protobuf::uint32;
 using namespace google::protobuf;
 
+
 std::string const goby::acomms::EvologicsDriver::LINE_DELIMITER = "\n";
 
 goby::acomms::EvologicsDriver::EvologicsDriver() :
-    startup_done_(false)
+    startup_done_(false),
+    fsm_(driver_cfg_)
 {
 }
 
@@ -77,7 +79,9 @@ void goby::acomms::EvologicsDriver::modem_init()
 {
     modem_start(driver_cfg_);
     std::cout << "call do_work" << std::endl;
-    do_work();
+    fsm_.initiate();
+
+    do_work(); // currently using do_work to test state machine transitions
 
 /*
     int i = 0;
@@ -127,6 +131,7 @@ void goby::acomms::EvologicsDriver::initialize_talkers()
  */
 void goby::acomms::EvologicsDriver::establish_connection()
 {
+    // NOTE are we still using this function? --pn
     return;
 }
 
@@ -142,13 +147,51 @@ void goby::acomms::EvologicsDriver::do_work()
     // test sending commands
     // sleep(1);
 
+    // TODO test fsm transitions
+
+    std::cout << "Beginning FSM testing" << std::endl;
+    std::cout << "Sending signal EvTransmit" << std::endl;
+    std::cout << "state transitions to ";
+    fsm_.process_event(fsm::EvTransmit());
+    sleep(1);
+    std::cout << "Sending signal EvListen" << std::endl;
+    std::cout << "state transitions to ";
+    fsm_.process_event(fsm::EvListen());
+    sleep(1);
+    std::cout << "Sending signal EvATC" << std::endl;
+    std::cout << "state transitions to ";
+    fsm_.process_event(fsm::EvATC());
+    sleep(1);
+    std::cout << "Sending signal EvATO" << std::endl;
+    std::cout << "state transitions to ";
+    fsm_.process_event(fsm::EvATO());
+    sleep(1);
+    std::cout << "Sending signal EvATC" << std::endl;
+    std::cout << "state transitions to ";
+    fsm_.process_event(fsm::EvATC());
+    sleep(1);
+    std::cout << "Sending signal EvConfigured" << std::endl;
+    std::cout << "state transitions to ";
+    fsm_.process_event(fsm::EvConfigured());
+    sleep(1);
+    std::cout << "Sending signal EvAT" << std::endl;
+    std::cout << "state transitions to ";
+    fsm_.process_event(fsm::EvAT());
+    sleep(1);
+    std::cout << "Sending signal EvReset" << std::endl;
+    std::cout << "state transitions to ";
+    fsm_.process_event(fsm::EvReset());
+    sleep(1);
+
+
+
     write_message("+++AT?S");
     sleep(1);
     {
         int sleepInterval = 0;
         while(sleepInterval < 4000) {
             while(modem_read(&in))
-            usleep(1000);
+                usleep(1000);
             sleepInterval++;
         }
     }

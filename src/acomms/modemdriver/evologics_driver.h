@@ -20,7 +20,7 @@ namespace goby
 {
     namespace acomms
     {
-        
+
         /// \class EvologicsDriver evologics_driver.h goby/acomms/modemdriver/evologics_driver.h
         /// \ingroup acomms_api
         /// \brief drivers for Evologics' modems, firmware 1.8
@@ -31,15 +31,15 @@ namespace goby
                 ~EvologicsDriver();
 
                 //**** implement virtual functions from ModemDriverBase ******//
-                
-                /// \brief Starts the modem driver. 
-                /// \param cfg Startup configuration for the driver and modem. 
+
+                /// \brief Starts the modem driver.
+                /// \param cfg Startup configuration for the driver and modem.
                 void startup(const protobuf::DriverConfig& cfg);
 
                 /// \brief Shuts down the modem driver
                 void shutdown();
 
-                /// \brief Allows the modem driver to do its work. 
+                /// \brief Allows the modem driver to do its work.
                 ///
                 /// Called regularly to perform the work of the driver.
                 virtual void do_work();
@@ -62,6 +62,7 @@ namespace goby
                 // }
 
                 // Configuration
+                fsm::IridiumDriverFSM fsm_;
                 protobuf::DriverConfig driver_cfg_;
 
                 // Set up driver as TCP client
