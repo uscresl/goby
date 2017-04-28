@@ -8,10 +8,12 @@ using goby::glog;
 using namespace goby::common::logger;
 using goby::common::goby_time;
 
+
 namespace fsm = goby::acomms::evologics::fsm;
 
+int fsm::EvologicsDriverFSM::count_ = 0;
 
-void fsm::EvologicsFSM::buffer_data_out(const goby::acomms::protobuf::ModemTransmission& msg)
+void fsm::EvologicsDriverFSM::buffer_data_out(const goby::acomms::protobuf::ModemTransmission& msg)
 {
     data_out_.push_back(msg);
 }
@@ -23,6 +25,6 @@ void fsm::EvologicsFSM::buffer_data_out(const goby::acomms::protobuf::ModemTrans
 void fsm::Listen::in_state_react(const EvRxIM& e)
 {
     // TODO in-state react to receiving an IM
-    glog.is(DEBUG1) && glog << group(glog_out_group()) << e << std::endl;
+    glog.is(DEBUG1) && glog << group("evologicsdriver") << '!' << std::endl;
 
 }

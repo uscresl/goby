@@ -31,6 +31,8 @@ using namespace goby::common::logger_lock;
 using google::protobuf::uint32;
 using namespace google::protobuf;
 
+namespace fsm = goby::acomms::evologics::fsm;
+
 
 std::string const goby::acomms::EvologicsDriver::LINE_DELIMITER = "\n";
 
@@ -174,9 +176,9 @@ void goby::acomms::EvologicsDriver::do_work()
     std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvConfigured());
     sleep(1);
-    std::cout << "Sending signal EvAT" << std::endl;
+    std::cout << "Sending signal EvAt" << std::endl;
     std::cout << "state transitions to ";
-    fsm_.process_event(fsm::EvAT());
+    fsm_.process_event(fsm::EvAt());
     sleep(1);
     std::cout << "Sending signal EvReset" << std::endl;
     std::cout << "state transitions to ";

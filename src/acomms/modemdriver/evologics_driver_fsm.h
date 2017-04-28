@@ -46,6 +46,7 @@ namespace goby
                 private:
                     std::string name_;
                 };
+
                 //events
                 struct EvReset : sc::event< EvReset > {};
                 struct EvStartupComplete : sc::event< EvStartupComplete > {};
@@ -78,7 +79,7 @@ namespace goby
                 struct Listen;
                 struct TransmitData;
 
-                struct EvologicsDriverFSM : sc::state_machine<EvologicsFSM, Active>
+                struct EvologicsDriverFSM : sc::state_machine<EvologicsDriverFSM, Active>
                 {
                   public:
                   EvologicsDriverFSM(const protobuf::DriverConfig& driver_cfg) :
@@ -173,9 +174,9 @@ namespace goby
                     StateNotify
                 {
                   public:
-                    void in_state_react( const EvRx& );
-                    void in_state_react( const EvTx& );
-                    void in_state_react( const EvAck& );
+                    void in_state_react( const EvRx& ) {};
+                    void in_state_react( const EvTx& ) {};
+                    void in_state_react( const EvAck& ) {};
 
                       Command()
                           : StateNotify("Command") { }

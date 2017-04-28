@@ -16,7 +16,7 @@
 
 #include "goby/acomms/acomms_helpers.h"
 
-#include "goby/acomms/evologics_driver_fsm.h"
+#include "goby/acomms/modemdriver/evologics_driver_fsm.h"
 
 namespace goby
 {
