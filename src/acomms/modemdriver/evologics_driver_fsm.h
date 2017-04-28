@@ -157,6 +157,8 @@ namespace goby
             };
 
             //TODO can you receive burst data while in command mode?
+            // can receive IM in data mode
+            // can't receive burst data in command mode:
             //TODO find out what different command statements do while in Command vs Online modes
             struct Command: sc::simple_state<Command, Active, Configure>,
                 StateNotify
