@@ -210,7 +210,7 @@ namespace goby
                     Configure() : StateNotify("Configure")
                     {
                         // Initial push of empty string to Command context
-                        context<Command>().push_at_command("");
+                        // context<Command>().push_at_command("");
 
                         // Fetch all cfg extensions and push to command
                         // for (int i = 0,
@@ -227,7 +227,7 @@ namespace goby
                     // Destructor
                     ~Configure()
                     {
-                        post_event(EvConfigured());
+                        // post_event(EvConfigured());
                     }
                 };
 

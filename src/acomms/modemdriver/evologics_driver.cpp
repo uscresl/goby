@@ -151,42 +151,42 @@ void goby::acomms::EvologicsDriver::do_work()
 
     // TODO test fsm transitions
 
-    std::cout << "Beginning FSM testing" << std::endl;
-    std::cout << "Sending signal EvTransmit" << std::endl;
-    std::cout << "state transitions to ";
+    std::cout << "Beginning FSM testing: initial state: Active->Online->Listen" << std::endl;
+    std::cout << "Sending signal EvTransmit -> TRANSMIT DATA" << std::endl;
+    // std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvTransmit());
     sleep(1);
-    std::cout << "Sending signal EvListen" << std::endl;
-    std::cout << "state transitions to ";
+    std::cout << "Sending signal EvListen -> LISTEN" << std::endl;
+    // std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvListen());
     sleep(1);
-    std::cout << "Sending signal EvATC" << std::endl;
-    std::cout << "state transitions to ";
+    std::cout << "Sending signal EvATC -> CONFIGURE" << std::endl;
+    // std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvATC());
     sleep(1);
     std::cout << "Sending signal EvATO" << std::endl;
-    std::cout << "state transitions to ";
+    // std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvATO());
     sleep(1);
     std::cout << "Sending signal EvATC" << std::endl;
-    std::cout << "state transitions to ";
+    // std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvATC());
     sleep(1);
     std::cout << "Sending signal EvConfigured" << std::endl;
-    std::cout << "state transitions to ";
+    // std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvConfigured());
     sleep(1);
     std::cout << "Sending signal EvAt" << std::endl;
-    std::cout << "state transitions to ";
+    // std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvAt());
     sleep(1);
     std::cout << "Sending signal EvReset" << std::endl;
-    std::cout << "state transitions to ";
+    // std::cout << "state transitions to ";
     fsm_.process_event(fsm::EvReset());
     sleep(1);
 
 
-
+    /*
     write_message("+++AT?S");
     sleep(1);
     {
@@ -197,7 +197,7 @@ void goby::acomms::EvologicsDriver::do_work()
             sleepInterval++;
         }
     }
-    sendIM("hello", true, 1);
+    sendIM("hello", true, 1);*/
 
     // // sleep one second to give modem_write enough time to run everything
     // sleep(1);
