@@ -146,6 +146,13 @@ void goby::acomms::EvologicsDriver::do_work()
 {
 //    double now = goby_time<double>();
     std::string in;
+
+    while(modem_read(&in)) 
+    {
+        
+    }
+
+
     // test sending commands
     // sleep(1);
 
@@ -251,7 +258,7 @@ void goby::acomms::EvologicsDriver::sendIM(std::string data, bool ack, int addre
     write_message(oss.str());
     sleep(1);
 
-    while(sleepInterval <  4000) {
+    while(sleepInterval < 4000) {
         while(modem_read(&in)) {
             std::cout << in << std::endl;
         }
@@ -264,6 +271,9 @@ void goby::acomms::EvologicsDriver::sendIM(std::string data, bool ack, int addre
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
 {
+    // not sure if this is necessary/couldn't trace what it does, only was able to see as far as the boost::signal2::signal library - pn
+    protobuf::ModemTransmission msg = m; 
 
+    signal_modify_transmission(&msg);
     return;
 }

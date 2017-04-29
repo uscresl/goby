@@ -28,3 +28,18 @@ void fsm::Listen::in_state_react(const EvRxIM& e)
     glog.is(DEBUG1) && glog << group("evologicsdriver") << '!' << std::endl;
 
 }
+
+void fsm::Command::in_state_react(const EvRx& e) 
+{
+
+}
+
+void fsm::Command::in_state_react(const EvTx& e) 
+{
+
+}
+
+void fsm::Command::in_state_react(const EvAck& e) 
+{
+
+}
