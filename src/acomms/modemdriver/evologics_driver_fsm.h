@@ -174,9 +174,9 @@ namespace goby
                     StateNotify
                 {
                   public:
-                    void in_state_react( const EvRx& ) {};
-                    void in_state_react( const EvTx& ) {};
-                    void in_state_react( const EvAck& ) {};
+                    void in_state_react( const EvRx& );
+                    void in_state_react( const EvTx& );
+                    void in_state_react( const EvAck& );
 
                       Command()
                           : StateNotify("Command") { }
