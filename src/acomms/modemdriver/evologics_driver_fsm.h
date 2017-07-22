@@ -15,7 +15,7 @@
 #include <boost/format.hpp>
 #include <iostream>
 
-#include "goby/acomms/acomms_constants.h"   
+#include "goby/acomms/acomms_constants.h"
 #include "goby/util/binary.h"
 #include "goby/common/time.h"
 
@@ -28,7 +28,7 @@ namespace goby
     {
         namespace evologics
         {
-            namespace fsm 
+            namespace fsm
             {
                 namespace sc = boost::statechart;
 
@@ -37,11 +37,13 @@ namespace goby
                     StateNotify(const std::string& name)
                     : name_(name)
                     {
-                        glog.is(goby::common::logger::DEBUG1) && glog << group("evologicsdriver") << name_ << std::endl;
+                        glog.is(goby::common::logger::DEBUG1) && glog
+                            << group("evologicsdriver") << name_ << std::endl;
                     }
                     ~StateNotify()
                     {
-                        glog.is(goby::common::logger::DEBUG1) && glog << group("evologicsdriver") << "~" << name_ << std::endl;
+                        glog.is(goby::common::logger::DEBUG1) && glog
+                            << group("evologicsdriver") << "~" << name_ << std::endl;
                     }
                 private:
                     std::string name_;
@@ -86,7 +88,8 @@ namespace goby
                     driver_cfg_(driver_cfg)
                   {
                       ++count_;
-                      glog_ir_group_ = "evologicsdriver::" + goby::util::as<std::string>(count_);
+                      glog_ir_group_ = "evologicsdriver::" +
+                                       goby::util::as<std::string>(count_);
                   }
                     //adds message to back of data_out_stream
                     void buffer_data_out(const goby::acomms::protobuf::ModemTransmission& msg);
@@ -103,7 +106,8 @@ namespace goby
 
                   private:
                     boost::circular_buffer<protobuf::ModemTransmission> received_;
-                    boost::circular_buffer<protobuf::ModemTransmission> data_out_; // Buffer capacity necessary?
+                    boost::circular_buffer<protobuf::ModemTransmission> data_out_;
+                    // Buffer capacity necessary?
 
                     const protobuf::DriverConfig& driver_cfg_;
 
@@ -169,7 +173,8 @@ namespace goby
                 };
 
                 //TODO can you receive burst data while in command mode?
-                //TODO find out what different command statements do while in Command vs Online modes
+                //TODO find out what different command statements do while in
+                //     Command vs Online modes
                 struct Command: sc::simple_state<Command, Active, Configure>,
                     StateNotify
                 {
@@ -210,7 +215,8 @@ namespace goby
                     Configure() : StateNotify("Configure")
                     {
                         // Initial push of empty string to Command context
-                        // context<Command>().push_at_command(""); //this command doesn't work, is it necessary? - pn
+                        // context<Command>().push_at_command("");
+                        //this command doesn't work, is it necessary? - pn
 
                         // Fetch all cfg extensions and push to command
                         // for (int i = 0,
@@ -234,15 +240,16 @@ namespace goby
                 struct Ready : sc::simple_state<Ready, Command>, StateNotify
                 {
                   public:
-                  Ready() : StateNotify("Ready")
-                  {
+                    Ready() : StateNotify("Ready")
+                    {
 
-                  }
+                    }
                     ~Ready() { }
 
                     typedef boost::mpl::list<
                         sc::transition< EvAt, Configure >
                         > reaction;
+
                   private:
 
                 };

@@ -52,11 +52,13 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     // copy config
     driver_cfg_ = cfg;
 
-    glog.is(DEBUG3) && glog << group(glog_out_group()) << "Goby Evologics driver starting up..." << std::endl;
+    glog.is(DEBUG3) && glog << group(glog_out_group())
+        << "Goby Evologics driver starting up..." << std::endl;
 
-    if(startup_done_)
+    if (startup_done_)
     {
-        glog.is(DEBUG3) && glog << group(glog_out_group()) << " ... driver is already started, not restarting." << std::endl;
+        glog.is(DEBUG3) && glog << group(glog_out_group())
+            << " ... driver is already started, not restarting." << std::endl;
         return;
     }
 
@@ -64,9 +66,13 @@ void goby::acomms::EvologicsDriver::startup(const protobuf::DriverConfig& cfg)
     driver_cfg_.set_line_delimiter(LINE_DELIMITER);
 
     //to add: if connection fails, then
-    if (driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) && driver_cfg_.HasExtension(EvologicsDriverConfig::port_number)) {
+    if ( driver_cfg_.HasExtension(EvologicsDriverConfig::ip_address) &&
+         driver_cfg_.HasExtension(EvologicsDriverConfig::port_number) )
+    {
         std::cout << "startup reset client" <<  std::endl;
-        client_.reset(new goby::util::TCPClient(driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address), driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)));
+        client_.reset( new goby::util::TCPClient(
+            driver_cfg_.GetExtension(EvologicsDriverConfig::ip_address),
+            driver_cfg_.GetExtension(EvologicsDriverConfig::port_number)) );
         client_->start();
     }
 
@@ -98,7 +104,8 @@ void goby::acomms::EvologicsDriver::modem_init()
         const int start_timeout = 2000;
 
         if (i / (1000/pause_ms) > start_timeout)
-            throw(ModemDriverException("Failed to startup.", protobuf::ModemDriverStatus::STARTUP_FAILED));
+            throw(ModemDriverException("Failed to startup.",
+            protobuf::ModemDriverStatus::STARTUP_FAILED));
 */
    // }
 }
@@ -147,9 +154,9 @@ void goby::acomms::EvologicsDriver::do_work()
 //    double now = goby_time<double>();
     std::string in;
 
-    while(modem_read(&in)) 
+    while(modem_read(&in))
     {
-        
+
     }
 
 
@@ -240,7 +247,7 @@ void goby::acomms::EvologicsDriver::do_work()
 }
 
 void goby::acomms::EvologicsDriver::write_message(std::string out) {
-	string to_write = out.append(LINE_DELIMITER);
+  string to_write = out.append(LINE_DELIMITER);
     modem_write(to_write);
     sleep(1);
 }
@@ -253,7 +260,8 @@ void goby::acomms::EvologicsDriver::sendIM(std::string data, bool ack, int addre
 
     int sleepInterval = 0;
     std::string in = "";
-    oss << "+++AT*SENDIM," << length << "," << address << "," << ack_str << "," << data;
+    oss << "+++AT*SENDIM," << length << "," << address << "," << ack_str
+        << "," << data;
 
     write_message(oss.str());
     sleep(1);
@@ -264,16 +272,16 @@ void goby::acomms::EvologicsDriver::sendIM(std::string data, bool ack, int addre
         }
         usleep(1000);
         sleepInterval++;
-
     }
 
 }
 
 void goby::acomms::EvologicsDriver::handle_initiate_transmission(const protobuf::ModemTransmission & m)
 {
-    // not sure if this is necessary/couldn't trace what it does, only was able to see as far as the boost::signal2::signal library - pn
-    protobuf::ModemTransmission msg = m; 
-
+    // not sure if this is necessary/couldn't trace what it does,
+    // only was able to see as far as the boost::signal2::signal library - pn
+    protobuf::ModemTransmission msg = m;
     signal_modify_transmission(&msg);
+
     return;
 }

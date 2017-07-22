@@ -1,11 +1,5 @@
-/*
- * CLIFFORD LEE
- *
- * evologics_driver.h
- */
-
-#ifndef EvologicsModemDriver20170120
-#define EvologicsModemDriver20170120
+#ifndef EvologicsModemDriver20170120H
+#define EvologicsModemDriver20170120H
 
 #include "goby/common/time.h"
 
@@ -49,6 +43,7 @@ namespace goby
                 /// \brief Update configuration while running
                 void update_cfg(const protobuf::DriverConfig& cfg);
 
+                /// \brief Handle transmission requests
                 void handle_initiate_transmission(const protobuf::ModemTransmission& m);
 
                 //**** subfunctions ******************************************//
