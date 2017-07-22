@@ -23,7 +23,7 @@ endif()
 
 set(GOBY_VERSION_MAJOR "2")
 set(GOBY_VERSION_MINOR "1")
-set(GOBY_VERSION_PATCH "6")
+set(GOBY_VERSION_PATCH "9")
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
    message("Compiling in Git source tree.")
@@ -34,6 +34,11 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
      OUTPUT_VARIABLE GOBY_LAST_REV)
    string(STRIP ${GOBY_LAST_REV} GOBY_LAST_REV)
 
+   execute_process(COMMAND git rev-list ${GOBY_VERSION_MAJOR}.${GOBY_VERSION_MINOR}.${GOBY_VERSION_PATCH}..HEAD --count
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+     OUTPUT_VARIABLE GOBY_REVS_SINCE_TAG)
+   string(STRIP ${GOBY_REVS_SINCE_TAG} GOBY_REVS_SINCE_TAG)
+      
    execute_process(COMMAND git diff-index --quiet HEAD
      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
      RESULT_VARIABLE GOBY_DIRTY_REV)
@@ -42,11 +47,11 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
    else()
      set(GOBY_DIRTY_REV_STRING "-dirty")
    endif()
-   set(GOBY_VERSION_PATCH "${GOBY_VERSION_PATCH}+git${GOBY_LAST_REV}${GOBY_DIRTY_REV_STRING}")
+   set(GOBY_VERSION_PATCH "${GOBY_VERSION_PATCH}+${GOBY_REVS_SINCE_TAG}+git${GOBY_LAST_REV}${GOBY_DIRTY_REV_STRING}")
    
 else()
    message("Compiling from release tarball.")
-   set(GOBY_VERSION_DATE "2017.01.24")
+   set(GOBY_VERSION_DATE "2017.06.15")
 endif()
 
 set(GOBY_VERSION "${GOBY_VERSION_MAJOR}.${GOBY_VERSION_MINOR}.${GOBY_VERSION_PATCH}")
@@ -111,12 +116,21 @@ include_directories(${goby_INC_DIR})
 
 ## for MAC OS X 
 if(${APPLE})
-  ## MacPorts
-  include_directories(/opt/local/include)
-  link_directories(/opt/local/lib)
-  ## Fink
-  include_directories(/sw/include)
-  link_directories(/sw/lib)
+	if( EXISTS /opt/local/include AND EXISTS /opt/local/lib )
+    message(status "Detected use of 'MacPorts' for dependencies")
+		include_directories(/opt/local/include)
+		link_directories(/opt/local/lib)
+	endif()
+	if( EXISTS /sw/include AND EXISTS /sw/lib )
+    message(status "Detected use of 'Fink' for dependencies")
+		include_directories(/sw/include)
+		link_directories(/sw/lib)
+	endif()
+  if( EXISTS /usr/local/Cellar )
+    message(status "Detected use of 'Homebrew' for dependencies")
+		include_directories(/usr/local/include)
+		link_directories(/usr/local/lib)
+	endif()
 endif()
 
 set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${goby_BIN_DIR}" "${goby_LIB_DIR}" "${goby_INC_DIR}" "${goby_SHARE_DIR}")

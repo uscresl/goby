@@ -1,4 +1,4 @@
-// Copyright 2009-2016 Toby Schneider (http://gobysoft.org/index.wt/people/toby)
+// Copyright 2009-2017 Toby Schneider (http://gobysoft.org/index.wt/people/toby)
 //                     GobySoft, LLC (2013-)
 //                     Massachusetts Institute of Technology (2007-2014)
 //                     Community contributors (see AUTHORS file)
@@ -355,7 +355,10 @@ template <class MOOSAppType>
 
     while(!msg_buffer_.empty() && (connected_ && started_up_))
     {
-        goby::glog << "writing from buffer: " << msg_buffer_.front().GetKey() << ": " << msg_buffer_.front().GetAsString() << std::endl;
+
+        goby::glog.is(goby::common::logger::DEBUG3) &&
+            goby::glog << "writing from buffer: " << msg_buffer_.front().GetKey() << ": " << msg_buffer_.front().GetAsString() << std::endl;
+
         MOOSAppType::m_Comms.Post(msg_buffer_.front());
         msg_buffer_.pop_front();
     }
