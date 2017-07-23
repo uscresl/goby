@@ -30,6 +30,8 @@ namespace goby
         {
             namespace fsm
             {
+                /// \namespace goby::acomms::evologics::fsm
+                /// \brief finite-state-machine for Evologics modem driver
                 namespace sc = boost::statechart;
 
                 struct StateNotify

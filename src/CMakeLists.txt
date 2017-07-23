@@ -239,6 +239,7 @@ endif(build_common)
 # latex, for documentation
 find_package(LATEX QUIET)
 set(LATEX_DOC_STRING "Build documentation (requires Doxygen, LaTeX, XeLaTeX, and certain fonts)")
+# switch build of documentation ON or OFF, remove CMakeCache.txt for effect
 option(build_doc ${LATEX_DOC_STRING} OFF)
 
 if(build_doc)
