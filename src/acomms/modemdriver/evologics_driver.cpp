@@ -156,15 +156,10 @@ void goby::acomms::EvologicsDriver::do_work()
 
     while(modem_read(&in))
     {
-
+      std::cout << "read: " << in << std::endl;
     }
 
-
-    // test sending commands
-    // sleep(1);
-
-    // TODO test fsm transitions
-
+    // test fsm transitions
     std::cout << "Beginning FSM testing: initial state: Active->Online->Listen" << std::endl;
     std::cout << "Sending signal EvTransmit -> TRANSMIT DATA" << std::endl;
     // std::cout << "state transitions to ";
@@ -200,6 +195,8 @@ void goby::acomms::EvologicsDriver::do_work()
     sleep(1);
 
 
+    // test sending commands
+    // sleep(1);
     /*
     write_message("+++AT?S");
     sleep(1);
@@ -211,7 +208,8 @@ void goby::acomms::EvologicsDriver::do_work()
             sleepInterval++;
         }
     }
-    sendIM("hello", true, 1);*/
+    sendIM("hello", true, 1);
+    */
 
     // // sleep one second to give modem_write enough time to run everything
     // sleep(1);
